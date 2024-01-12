@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="exam_details_list" model='ir.ui.view'>
+        <field name="name">exam.details.list</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name_field" widget="badge"></field>
+                <field name="state_field" widget="badge"></field>
+                <field name="date_field"></field>
+                <field name="date_time_field" widget="remaining_days"></field>
+                <field name="amount_field" widget="percentpie"></field>
+                <field name="term_cond" widget="html"></field>
+                <field name="select_option" widget="radio"></field>
+                <field name="roll_number"></field>
+                <field name="color_widget"  widget="color_picker"></field>
+                <field name="boolean_field" widget="boolean_toggle"></field>
+                <field name="boolean_rating_field" widget="boolean_favorite"></field>
+                <field name="product_desc"></field>
+                <field name="documents_attach"></field>
+                <field name="relation_field1" widget="many2one_avatar"></field>
+                <field name="relation_field2" widget="many2many_tags"></field>
+                <field name="relation_field3"></field>
+            </tree>
+        </field>
+    </record>
+
+    <record id="exam_details_form" model='ir.ui.view'>
+        <field name="name">exam.details.form</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/>
+                </header>
+                <group>
+                    <group>
+                        <field name="name_field"></field>
+                        <field name="date_field"></field>
+                        <field name="date_time_field"></field>
+                        <field name="amount_field"></field>
+                        <field name="term_cond"></field>
+                        <field name="relation_field2" widget="many2many_tags"></field>
+                        <field name="documents_attach"></field>
+                    </group>
+                    <group>
+                        <field name="select_option"></field>
+                        <field name="roll_number"></field>
+                        <field name="color_widget" widget="color_picker"></field>
+                        <field name="boolean_field"></field>
+                        <field name="boolean_rating_field"></field>
+                        <field name="product_desc"></field>
+                        <field name="relation_field1"></field>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Student Details">
+                        <field name="relation_field3">
+                            <tree editable="bottom">
+                                <field name="student_id"></field>
+                                <field name="student_fees"></field>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record id="exam_details_search" model='ir.ui.view'>
+        <field name="name">exam.details.search</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name_field"></field>
+                <field name="date_field"></field>
+                <field name="date_time_field"></field>
+                <field name="boolean_field"></field>
+                <field name="amount_field"></field>
+                <field name="term_cond"></field>
+                <field name="select_option"></field>
+                <field name="roll_number"></field>
+                <field name="documents_attach"></field>
+                <field name="product_desc"></field>
+                <field name="relation_field1"></field>
+                <field name="relation_field2"></field>
+                <field name="relation_field3"></field>
+
+                <filter name="filter_selection_option" string="A selector" domain="[('select_option','=','a')]"/>
+                <separator/>
+                <filter name="filter_selection_option" string="B selector" domain="[('select_option','=','b')]"/>
+                <separator/>
+                <filter name="filter_amount_field" string="Amount filter less than 200" domain="[('amount_field','&lt;=',200)]"/>
+                <separator/>
+                <filter name="filter_status_field" string="Status Filter having Done" domain="[('state_field','=','done')]"/>
+
+                <group expand='0' string="Group By">
+                    <filter name="groupby_selection_option" string="Selection Option(A/B)" context="{'group_by':'select_option'}"/>
+                    <filter name="groupby_roll_number" string="GroupBy Roll Number" context="{'group_by':'roll_number'}"/>
+                    <filter name="groupby_boolean_field" string="GroupBy True/False" context="{'group_by':'boolean_field'}"/>
+                    <filter name="groupby_date_field" string="GroupBy Only Date" context="{'group_by':'date_field'}"/>
+                    <filter name="groupby_status_field" string="GroupBy StatusBar" context="{'group_by':'state_field'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="exam_details_kanban" model='ir.ui.view'>
+        <field name="name">exam.details.kanban</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name_field"></field>
+                <field name="roll_number"></field>
+                <field name="product_desc"></field>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <span t-esc="record.name_field.raw_value"></span>
+                            <span t-esc="record.roll_number.raw_value"></span>
+                            <span t-esc="record.product_desc.raw_value"></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="action_student_details" model="ir.actions.act_window">
+        <field name="name">Exam</field>
+        <field name="res_model">exam.details</field>
+        <field name="view_mode">tree,kanban,form</field>
+    </record>
+</odoo>
