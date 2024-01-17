@@ -7,6 +7,7 @@
             <tree>
                 <field name="name_field" widget="badge"></field>
                 <field name="state_field" widget="badge"></field>
+                <field name="student_count"></field>
                 <field name="date_field"></field>
                 <field name="date_time_field" widget="remaining_days"></field>
                 <field name="amount_field" widget="percentpie"></field>
@@ -31,34 +32,50 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/>
+                    <field name="state_field" widget="statusbar" statusbar_visible="draft,in progress,done"/>
+                    <button string="Button Draft" class="btn-primary" name="action_draft" type="object"/>
+                    <button string="Button In Progress" name="action_in_progress" type="object"/>
+                    <button string="Button Done" class="btn-danger" name="action_done" type="object"/>
+                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/> onclick button-->
                 </header>
-                <group>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_count_student" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having student details according to student id">
+                            <div class="o_stat_info">
+                                <field name="student_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Student records</span>
+                            </div>
+                        </button>
+                    </div>
                     <group>
-                        <field name="name_field"></field>
-                        <field name="date_field"></field>
-                        <field name="date_time_field"></field>
-                        <field name="amount_field"></field>
-                        <field name="term_cond"></field>
-                        <field name="relation_field2" widget="many2many_tags"></field>
-                        <field name="documents_attach"></field>
+                        <group>
+                            <field name="name_field"></field>
+                            <field name="date_field"></field>
+                            <field name="date_time_field"></field>
+                            <field name="amount_field"></field>
+                            <field name="term_cond"></field>
+                            <field name="relation_field2" widget="many2many_tags"></field>
+                            <field name="documents_attach"></field>
+                        </group>
+                        <group>
+                            <field name="select_option"></field>
+                            <field name="roll_number"></field>
+                            <field name="color_widget" widget="color_picker"></field>
+                            <field name="boolean_field"></field>
+                            <field name="boolean_rating_field"></field>
+                            <field name="product_desc"></field>
+                            <field name="relation_field1"></field>
+                        </group>
                     </group>
-                    <group>
-                        <field name="select_option"></field>
-                        <field name="roll_number"></field>
-                        <field name="color_widget" widget="color_picker"></field>
-                        <field name="boolean_field"></field>
-                        <field name="boolean_rating_field"></field>
-                        <field name="product_desc"></field>
-                        <field name="relation_field1"></field>
-                    </group>
-                </group>
+                </sheet>
                 <notebook>
-                    <page string="Student Details">
+                    <page string="Student Details(One2many field)">
                         <field name="relation_field3">
                             <tree editable="bottom">
-                                <field name="student_id"></field>
-                                <field name="student_fees"></field>
+                                    <field name="student_id"></field>
+                                    <field name="student_name"></field>
+                                    <field name="student_fees"></field>
+                                    <field name="student_subject"></field>
                             </tree>
                         </field>
                     </page>
@@ -127,9 +144,45 @@
     </record>
 
 
+    <record id="student_details_list" model='ir.ui.view'>
+        <field name="name">student.details.list</field>
+        <field name="model">student.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="student_id"></field>
+                <field name="student_name" widget="badge"></field>
+                <field name="student_fees"></field>
+                <field name="student_subject" widget="badge"></field>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="student_details_form" model='ir.ui.view'>
+        <field name="name">student.details.form</field>
+        <field name="model">student.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id"></field>
+                            <field name="student_name"></field>
+                        </group>
+                        <group>
+                            <field name="student_fees"></field>
+                            <field name="student_subject"></field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="action_student_details" model="ir.actions.act_window">
-        <field name="name">Exam</field>
+        <field name="name">Exam Details</field>
         <field name="res_model">exam.details</field>
         <field name="view_mode">tree,kanban,form</field>
     </record>
+
 </odoo>

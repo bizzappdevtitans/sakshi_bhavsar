@@ -2,11 +2,11 @@
 <odoo>
     <menuitem
         id="exam_menu"
-        name="Exam" />
+        name="Exam Details" />
 
     <menuitem
         id="student_details"
-        name="Student"
+        name="Student-Exam details"
         parent="exam_menu"
         action="action_student_details" />
 </odoo>

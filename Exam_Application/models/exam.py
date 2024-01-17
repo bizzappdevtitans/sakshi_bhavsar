@@ -17,6 +17,7 @@ class Examdetails(models.Model):
     amount_field = fields.Float(string="Amount")
 
     roll_number = fields.Integer(string="Roll Number")
+
     color_widget = fields.Integer(string="Color Picker")
 
     select_option = fields.Selection(selection=[("a", "A"), ("b", "B")])
@@ -36,13 +37,13 @@ class Examdetails(models.Model):
     )
 
     relation_field3 = fields.One2many(
-        "student.details", "relation_id_field3", string="One to Many Relational field"
+        "student.details", "student_id", string="One to Many Relational field"
     )
 
     state_field = fields.Selection(
         selection=[
             ("draft", "Draft"),
-            ("in_progress", "In Progress"),
+            ("in progress", "In Progress"),
             ("done", "Done"),
         ],
         string="StatusBar",
@@ -50,11 +51,42 @@ class Examdetails(models.Model):
         default="draft",
     )
 
+    def action_draft(self):
+        self.state_field = "draft"
+
+    def action_in_progress(self):
+        self.state_field = "in progress"
+
+    def action_done(self):
+        self.state_field = "done"
+
+    student_count = fields.Integer(
+        string="No of Student Data", compute="count_student_data"
+    )
+
+    def count_student_data(self):
+        for rec in self:
+            student_count = self.env["student.details"].search_count(
+                [("student_id", "=", rec.id)]
+            )
+            rec.student_count = student_count
+
+    def action_count_student(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Student-Exam details",
+            "res_model": "student.details",
+            "domain": [("student_id", "=", self.id)],
+            "view_mode": "tree,form",
+            "target": "current",
+        }
+
 
 class Studentdetails(models.Model):
     _name = "student.details"
     _description = "Student related informations"
 
-    relation_id_field3 = fields.Many2one("exam.details")
     student_id = fields.Many2one("exam.details", string="Student ID")
+    student_name = fields.Char(string="Student Name")
     student_fees = fields.Float(string="Student Fees")
+    student_subject = fields.Char(string="Subject")
