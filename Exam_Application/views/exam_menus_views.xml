@@ -9,4 +9,10 @@
         name="Student-Exam details"
         parent="exam_menu"
         action="action_student_details" />
+
+    <menuitem
+        id="faculty_details"
+        name="Faculty-Exam details"
+        parent="exam_menu"
+        action="action_faculty_details" />
 </odoo>

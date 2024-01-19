@@ -1,4 +1,7 @@
-from odoo import models, fields
+from odoo import models, fields, api
+from . import student
+from . import faculty
+from odoo.exceptions import ValidationError
 
 
 class Examdetails(models.Model):
@@ -17,16 +20,16 @@ class Examdetails(models.Model):
     amount_field = fields.Float(string="Amount")
 
     roll_number = fields.Integer(string="Roll Number")
-
     color_widget = fields.Integer(string="Color Picker")
 
     select_option = fields.Selection(selection=[("a", "A"), ("b", "B")])
 
     documents_attach = fields.Binary(string="Documents")
 
-    product_desc = fields.Text(string="Exam Description")
-
+    exam_desc = fields.Text(string="Exam Description")
     term_cond = fields.Text(string="Term and conditions")
+
+    exam_college_address = fields.Html(string="Examination address")
 
     relation_field1 = fields.Many2one(
         "res.partner", string="Many to one Relational field"
@@ -50,6 +53,27 @@ class Examdetails(models.Model):
         required=True,
         default="draft",
     )
+
+    _sql_constraints = [
+        (
+            "unique_name",
+            "unique (name_field)",
+            "Name must be unique cannot enter same names",
+        ),
+        (
+            "check_roll_number",
+            "check(roll_number > 0)",
+            "Roll Number should be positive",
+        ),
+    ]  # SQL Constraints
+
+    @api.constrains("name_field", "exam_desc")  # python constraints
+    def constraints_name_description(self):
+        for record in self:
+            if record.name_field == record.exam_desc:
+                raise ValidationError(
+                    "Name and Exam description field must be different"
+                )
 
     def action_draft(self):
         self.state_field = "draft"
@@ -80,13 +104,3 @@ class Examdetails(models.Model):
             "view_mode": "tree,form",
             "target": "current",
         }
-
-
-class Studentdetails(models.Model):
-    _name = "student.details"
-    _description = "Student related informations"
-
-    student_id = fields.Many2one("exam.details", string="Student ID")
-    student_name = fields.Char(string="Student Name")
-    student_fees = fields.Float(string="Student Fees")
-    student_subject = fields.Char(string="Subject")
