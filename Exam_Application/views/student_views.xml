@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!--Exam -->
     <record id="exam_details_list" model='ir.ui.view'>
         <field name="name">exam.details.list</field>
         <field name="model">exam.details</field>
@@ -36,14 +37,32 @@
                     <button string="Button Draft" class="btn-primary" name="action_draft" type="object"/>
                     <button string="Button In Progress" class="btn-success" name="action_in_progress" type="object"/>
                     <button string="Button Done" class="btn-danger" name="action_done" type="object"/>
-                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/> onclick button-->
+                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/> onclick button for changing state-->
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_count_student" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having student details according to student id">
+                        <button name="action_count_student" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having student details according to exam id">
                             <div class="o_stat_info">
                                 <field name="student_count" class="o_stat_value"/>
                                 <span class="o_stat_text">Student records</span>
+                            </div>
+                        </button>
+                        <button name="action_count_faculty" type="object" class="oe_start_button" icon="fa-solid fa-user-secret" help="This is smart button having faculty details according to exam id">
+                            <div class="o_stat_info">
+                                <field name="faculty_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Faculty records</span>
+                            </div>
+                        </button>
+                        <button name="action_count_supervisor" type="object" class="oe_start_button" icon="fa-solid fa-users" help="This is smart button having supervisor details according to exam id">
+                            <div class="o_stat_info">
+                                <field name="supervisor_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Supervisor records</span>
+                            </div>
+                        </button>
+                        <button name="action_count_subject" type="object" class="oe_start_button" icon="fa-solid fa-book" help="This is smart button having subject details according to student id">
+                            <div class="o_stat_info">
+                                <field name="subject_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Subject records</span>
                             </div>
                         </button>
                     </div>
@@ -72,10 +91,10 @@
                     <page string="Student Details(One2many field)">
                         <field name="relation_field3">
                             <tree editable="bottom">
-                                    <field name="student_id"></field>
-                                    <field name="student_name"></field>
-                                    <field name="student_fees"></field>
-                                    <field name="student_exam_subject_name"></field>
+                                <field name="student_id"></field>
+                                <field name="student_name"></field>
+                                <field name="student_fees"></field>
+                                <field name="student_other_exam_subject_name"></field>
                             </tree>
                         </field>
                     </page>
@@ -143,26 +162,26 @@
         </field>
     </record>
 
-
+<!--Student -->
     <record id="student_details_list" model='ir.ui.view'>
         <field name="name">student.details.list</field>
         <field name="model">student.details</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="student_id"></field>
+                <field name="student_examsubject_id"></field>
                 <field name="student_enrollment_no"></field>
                 <field name="student_name" widget="badge"></field>
                 <field name="student_address"></field>
-                <field name="student_confirmation"></field>
+                <field name="student_confirmation" widget="boolean_toggle"></field>
                 <field name="student_fees"></field>
-                <field name="student_exam_subject_name" widget="badge"></field>
+                <field name="student_other_exam_subject_name" widget="badge"></field>
                 <field name="student_exam_date"></field>
-                <field name="student_exam_date_time"></field>
+                <field name="student_exam_date_time" widget="remaining_days"></field>
                 <field name="student_exam_hallticket_attach"></field>
             </tree>
         </field>
     </record>
-
 
     <record id="student_details_form" model='ir.ui.view'>
         <field name="name">student.details.form</field>
@@ -170,9 +189,18 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_count_subject" type="object" class="oe_start_button" icon="fa-solid fa-book" help="This is smart button having student details according to subject id">
+                            <div class="o_stat_info">
+                                <field name="subject_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Subject records</span>
+                            </div>
+                        </button>
+                    </div>
                     <group>
                         <group>
                             <field name="student_id"></field>
+                            <field name="student_examsubject_id"></field>
                             <field name="student_enrollment_no"></field>
                             <field name="student_name"></field>
                             <field name="student_address"></field>
@@ -182,7 +210,7 @@
                             <field name="student_fees"></field>
                             <field name="student_exam_date"></field>
                             <field name="student_exam_date_time"></field>
-                            <field name="student_exam_subject_name"></field>
+                            <field name="student_other_exam_subject_name"></field>
                             <field name="student_exam_hallticket_attach"></field>
                         </group>
                     </group>
@@ -191,18 +219,180 @@
         </field>
     </record>
 
-    <record id="action_student_details" model="ir.actions.act_window">
+ <!--Faculty -->
+    <record id="faculty_details_list" model='ir.ui.view'>
+        <field name="name">faculty.details.list</field>
+        <field name="model">faculty.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="faculty_id"></field>
+                <field name="faculty_subject_id"></field>
+                <field name="faculty_name"></field>
+                <field name="faculty_fees" widget="badge"></field>
+                <field name="faculty_address"></field>
+                <field name="faculty_subject_no"></field>
+                <field name="faculty_subject_exam_date"></field>
+                <field name="faculty_other_subject_name" widget="badge"></field>
+                <field name="faculty_subject_exam_date_time" widget="remaining_days"></field>
+                <field name="faculty_present_on_exam_confirmation" widget="boolean_toggle"></field>
+                <field name="faculty_documents_attach"></field>
+            </tree>
+        </field>
+    </record>
+
+    <record id="faculty_details_form" model='ir.ui.view'>
+        <field name="name">faculty.details.form</field>
+        <field name="model">faculty.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="faculty_id"></field>
+                            <field name="faculty_subject_id"></field>
+                            <field name="faculty_name"></field>
+                            <field name="faculty_address"></field>
+                            <field name="faculty_fees"></field>
+                            <field name="faculty_subject_no"></field>
+                        </group>
+                        <group>
+                            <field name="faculty_subject_exam_date"></field>
+                            <field name="faculty_other_subject_name"></field>
+                            <field name="faculty_subject_exam_date_time"></field>
+                            <field name="faculty_present_on_exam_confirmation"></field>
+                            <field name="faculty_documents_attach"></field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+ <!--Supervisor -->
+    <record id="supervisor_details_list" model='ir.ui.view'>
+        <field name="name">supervisor.details.list</field>
+        <field name="model">supervisor.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="supervisor_id"></field>
+                <field name="supervisor_name"></field>
+                <field name="supervisor_fees" widget="badge"></field>
+                <field name="supervisor_address"></field>
+                <field name="total_no_of_supervisor"></field>
+                <field name="supervisor_present_exam_date" widget="remaining_days"></field>
+                <field name="supervisor_present_exam_date_time" widget="badge"></field>
+                <field name="supervisor_gender"></field>
+                <field name="supervisor_present_on_exam_confirmation" widget="boolean_toggle"></field>
+                <field name="supervisor_documents_attach"></field>
+            </tree>
+        </field>
+    </record>
+
+    <record id="supervisor_details_form" model='ir.ui.view'>
+        <field name="name">supervisor.details.form</field>
+        <field name="model">supervisor.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="supervisor_id"></field>
+                            <field name="supervisor_name"></field>
+                            <field name="supervisor_fees"></field>
+                            <field name="supervisor_address"></field>
+                            <field name="total_no_of_supervisor"></field>
+                        </group>
+                        <group>
+                            <field name="supervisor_present_exam_date"></field>
+                            <field name="supervisor_present_exam_date_time"></field>
+                            <field name="supervisor_gender"></field>
+                            <field name="supervisor_present_on_exam_confirmation"></field>
+                            <field name="supervisor_documents_attach"></field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+ <!--Subject -->
+    <record id="subject_details_list" model='ir.ui.view'>
+        <field name="name">subject.details.list</field>
+        <field name="model">subject.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="subject_id"></field>
+                <field name="subject_faculty_id"></field>
+                <field name="subject_name"></field>
+                <field name="subject_chapters" widget="badge"></field>
+                <field name="subject_description"></field>
+                <field name="subject_textbooks_no"></field>
+                <field name="subject_exam_date" widget="remaining_days"></field>
+                <field name="subject_exam_date_time" widget="badge"></field>
+                <field name="other_subject_name"></field>
+                <field name="exam_subject_confirmation" widget="boolean_toggle"></field>
+                <field name="subject_textbooks"></field>
+            </tree>
+        </field>
+    </record>
+
+    <record id="subject_details_form" model='ir.ui.view'>
+        <field name="name">subject.details.form</field>
+        <field name="model">subject.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="subject_id"></field>
+                            <field name="subject_faculty_id"></field>
+                            <field name="subject_name"></field>
+                            <field name="subject_chapters"></field>
+                            <field name="subject_description"></field>
+                            <field name="subject_textbooks_no"></field>
+                        </group>
+                        <group>
+                            <field name="subject_exam_date"></field>
+                            <field name="subject_exam_date_time"></field>
+                            <field name="other_subject_name"></field>
+                            <field name="exam_subject_confirmation"></field>
+                            <field name="subject_textbooks"></field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_exam_details" model="ir.actions.act_window">
         <field name="name">Exam Details</field>
         <field name="res_model">exam.details</field>
         <field name="view_mode">tree,kanban,search,form</field>
     </record>
 
+    <record id="action_student_details" model="ir.actions.act_window">
+        <field name="name">Student Details</field>
+        <field name="res_model">student.details</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
      <record id="action_faculty_details" model="ir.actions.act_window">
         <field name="name">Faculty Details</field>
         <field name="res_model">faculty.details</field>
-        <field name="view_mode">tree,search,form</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="action_supervisor_details" model="ir.actions.act_window">
+        <field name="name">Supervisor Details</field>
+        <field name="res_model">supervisor.details</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
+    <record id="action_examsubject_details" model="ir.actions.act_window">
+        <field name="name">Subject Details</field>
+        <field name="res_model">subject.details</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
 </odoo>

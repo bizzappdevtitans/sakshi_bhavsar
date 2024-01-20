@@ -2,4 +2,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 Exam_Application.access_exam_details,access_exam_details,Exam_Application.model_exam_details,base.group_user,1,1,1,1
 Exam_Application.access_student_details,access_student_details,Exam_Application.model_student_details,base.group_user,1,1,1,1
 Exam_Application.access_faculty_details,access_faculty_details,Exam_Application.model_faculty_details,base.group_user,1,1,1,1
-
+Exam_Application.access_supervisor_details,access_supervisor_details,Exam_Application.model_supervisor_details,base.group_user,1,1,1,1
+Exam_Application.access_subject_details,access_subject_details,Exam_Application.model_subject_details,base.group_user,1,1,1,1

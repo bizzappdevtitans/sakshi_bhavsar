@@ -1,6 +1,8 @@
 from odoo import models, fields, api
 from . import student
 from . import faculty
+from . import supervisor
+from . import subject
 from odoo.exceptions import ValidationError
 
 
@@ -84,6 +86,7 @@ class Examdetails(models.Model):
     def action_done(self):
         self.state_field = "done"
 
+    # student count
     student_count = fields.Integer(
         string="No of Student Data", compute="count_student_data"
     )
@@ -101,6 +104,72 @@ class Examdetails(models.Model):
             "name": "Student-Exam details",
             "res_model": "student.details",
             "domain": [("student_id", "=", self.id)],
+            "view_mode": "tree,form",
+            "target": "current",
+        }
+
+    # faculty count
+    faculty_count = fields.Integer(
+        string="No of faculty Data", compute="count_faculty_data"
+    )
+
+    def count_faculty_data(self):
+        for rec in self:
+            faculty_count = self.env["faculty.details"].search_count(
+                [("faculty_id", "=", rec.id)]
+            )
+            rec.faculty_count = faculty_count
+
+    def action_count_faculty(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Faculty-Exam details",
+            "res_model": "faculty.details",
+            "domain": [("faculty_id", "=", self.id)],
+            "view_mode": "tree,form",
+            "target": "current",
+        }
+
+    # supervisor count
+    supervisor_count = fields.Integer(
+        string="No of supervisor Data", compute="count_supervisor_data"
+    )
+
+    def count_supervisor_data(self):
+        for rec in self:
+            supervisor_count = self.env["supervisor.details"].search_count(
+                [("supervisor_id", "=", rec.id)]
+            )
+            rec.supervisor_count = supervisor_count
+
+    def action_count_supervisor(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Supervisor-Exam deatils",
+            "res_model": "supervisor.details",
+            "domain": [("supervisor_id", "=", self.id)],
+            "view_mode": "tree,form",
+            "target": "current",
+        }
+
+    # subject count
+    subject_count = fields.Integer(
+        string="No of subject Data", compute="count_subject_data"
+    )
+
+    def count_subject_data(self):
+        for rec in self:
+            subject_count = self.env["subject.details"].search_count(
+                [("subject_id", "=", self.id)]
+            )
+            rec.subject_count = subject_count
+
+    def action_count_subject(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Subject-Exam details",
+            "res_model": "subject.details",
+            "domain": [("subject_id", "=", self.id)],
             "view_mode": "tree,form",
             "target": "current",
         }
