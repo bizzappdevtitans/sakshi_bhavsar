@@ -1,13 +1,13 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Studentdetails(models.Model):
     _name = "student.details"
     _description = "Student related informations"
 
-    student_id = fields.Many2one("exam.details", string="Student ID")
+    student_id = fields.Many2one("exam.details", string="Student's exam details")
     student_examsubject_id = fields.Many2one(
-        "subject.details", string="Student Exam subject details"
+        "subject.details", string="Student's Exam subject details"
     )
 
     student_name = fields.Char(string="Student Name")
@@ -16,19 +16,17 @@ class Studentdetails(models.Model):
 
     student_address = fields.Text(string="Student Address")
 
-    student_enrollment_no = fields.Integer(string="Student Enrollement")
+    student_enrollment_no = fields.Integer(string="Student Enrollement number")
 
-    student_exam_date = fields.Date(string="Only exam Date")
+    student_exam_date_time = fields.Datetime(string="Student Exam Date & Time")
 
-    student_exam_date_time = fields.Datetime(string="Exam Date Time")
-
-    student_other_exam_subject_name = fields.Selection(
+    student_gender = fields.Selection(
+        string="Select student gender",
         selection=[
-            ("python", "Python"),
-            ("xml", "XML"),
-            ("javascript", "Javascript"),
-            ("sql", "SQL"),
-        ]
+            ("male", "Male"),
+            ("female", "Female"),
+            ("other", "Other"),
+        ],
     )
 
     student_confirmation = fields.Boolean(
@@ -39,23 +37,58 @@ class Studentdetails(models.Model):
         string="Attach Student Exam Hallticket"
     )
 
-    subject_count = fields.Integer(
-        string="No of subjects exam to be given", compute="count_subject_data"
-    )
+    # for smart button-[exam count]
+    exam_count = fields.Integer(string="No of exam Data", compute="count_exam_data")
 
-    def count_subject_data(self):
+    def count_exam_data(self):
         for rec in self:
-            subject_count = self.env["subject.details"].search_count(
-                [("subject_id", "=", self.id)]
+            exam_count = self.env["exam.details"].search_count(
+                [("relation_field3", "=", rec.id)]
             )
-            self.subject_count = subject_count
+            rec.exam_count = exam_count
 
-    def action_count_subject(self):
+    def action_count_exam(self):
         return {
             "type": "ir.actions.act_window",
-            "name": "Subject details",
-            "res_model": "subject.details",
-            "domain": [("subject_id", "=", self.id)],
+            "name": "Exam details count",
+            "res_model": "exam.details",
+            "domain": [("relation_field3", "=", self.id)],
             "view_mode": "tree,form",
             "target": "current",
         }
+
+    student_exam_date = fields.Date(
+        string="Student exam Date",
+        compute="onchange_date_method",
+        store=True,
+        readonly=False,
+    )
+
+    # [onchange]- Decorator
+    @api.onchange("student_id")
+    def onchange_date_method(self):
+        date_today = fields.Date.today()
+        if self.student_exam_date != date_today:
+            self.student_exam_date = date_today
+            return {
+                "warning": {
+                    "title": "Date will change by method onchange",
+                    "message": "you have changed the student id, now the exam date"
+                    " will be automatically changed with todays date.",
+                }
+            }
+
+    # [depends]- Decorator
+    # @api.depends("student_id")
+    # def depends_date_method(self):
+    # date_today = fields.Date.today()
+    # if self.student_exam_date != date_today:
+    # self.student_exam_date = date_today
+    # return
+    # {
+    # "warning": {
+    # "title": "Date will change ny method depends",
+    # "message": "you have changed the student id, now the exam date"
+    # " will be automatically changed with todays date.",
+    # }
+    # }

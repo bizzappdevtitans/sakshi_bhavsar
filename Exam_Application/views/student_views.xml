@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--Exam -->
+<!--Exam list view-->
     <record id="exam_details_list" model='ir.ui.view'>
         <field name="name">exam.details.list</field>
         <field name="model">exam.details</field>
@@ -14,10 +14,9 @@
                 <field name="amount_field" widget="percentpie"></field>
                 <field name="term_cond" widget="html"></field>
                 <field name="select_option" widget="radio"></field>
-                <field name="roll_number"></field>
+                <field name="students_number"></field>
                 <field name="color_widget"  widget="color_picker"></field>
                 <field name="boolean_field" widget="boolean_toggle"></field>
-                <field name="boolean_rating_field" widget="boolean_favorite"></field>
                 <field name="exam_desc"></field>
                 <field name="documents_attach"></field>
                 <field name="relation_field1" widget="many2one_avatar"></field>
@@ -26,20 +25,23 @@
             </tree>
         </field>
     </record>
-
+    <!--Exam form view-->
     <record id="exam_details_form" model='ir.ui.view'>
         <field name="name">exam.details.form</field>
         <field name="model">exam.details</field>
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <!--buttons-->
                     <field name="state_field" widget="statusbar" statusbar_visible="draft,in progress,done"/>
                     <button string="Button Draft" class="btn-primary" name="action_draft" type="object"/>
                     <button string="Button In Progress" class="btn-success" name="action_in_progress" type="object"/>
                     <button string="Button Done" class="btn-danger" name="action_done" type="object"/>
-                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/> onclick button for changing state-->
+                    <!--onclick button for changing state with statusbas widget-->
+                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/>-->
                 </header>
                 <sheet>
+                    <!--smart buttons-->
                     <div class="oe_button_box" name="button_box">
                         <button name="action_count_student" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having student details according to exam id">
                             <div class="o_stat_info">
@@ -59,7 +61,7 @@
                                 <span class="o_stat_text">Supervisor records</span>
                             </div>
                         </button>
-                        <button name="action_count_subject" type="object" class="oe_start_button" icon="fa-solid fa-book" help="This is smart button having subject details according to student id">
+                        <button name="action_count_subject" type="object" class="oe_start_button" icon="fa-solid fa-book" help="This is smart button having subject details according to exam id">
                             <div class="o_stat_info">
                                 <field name="subject_count" class="o_stat_value"/>
                                 <span class="o_stat_text">Subject records</span>
@@ -78,15 +80,15 @@
                         </group>
                         <group>
                             <field name="select_option"></field>
-                            <field name="roll_number"></field>
+                            <field name="students_number"></field>
                             <field name="color_widget" widget="color_picker"></field>
                             <field name="boolean_field"></field>
-                            <field name="boolean_rating_field"></field>
                             <field name="exam_desc"></field>
                             <field name="relation_field1"></field>
                         </group>
                     </group>
                 </sheet>
+                <!--one2many field having students details in the notebook form-->
                 <notebook>
                     <page string="Student Details(One2many field)">
                         <field name="relation_field3">
@@ -94,7 +96,12 @@
                                 <field name="student_id"></field>
                                 <field name="student_name"></field>
                                 <field name="student_fees"></field>
-                                <field name="student_other_exam_subject_name"></field>
+                                <field name="student_address"></field>
+                                <field name="student_enrollment_no"></field>
+                                <field name="student_exam_date_time"></field>
+                                <field name="student_gender"></field>
+                                <field name="student_confirmation"></field>
+                                <field name="student_exam_hallticket_attach"></field>
                             </tree>
                         </field>
                     </page>
@@ -102,7 +109,7 @@
             </form>
         </field>
     </record>
-
+    <!--Exam search view-->
     <record id="exam_details_search" model='ir.ui.view'>
         <field name="name">exam.details.search</field>
         <field name="model">exam.details</field>
@@ -115,13 +122,14 @@
                 <field name="amount_field"></field>
                 <field name="term_cond"></field>
                 <field name="select_option"></field>
-                <field name="roll_number"></field>
+                <field name="students_number"></field>
                 <field name="documents_attach"></field>
                 <field name="exam_desc"></field>
                 <field name="relation_field1"></field>
                 <field name="relation_field2"></field>
                 <field name="relation_field3"></field>
 
+                <!--filter features-->
                 <filter name="filter_selection_option" string="A selector" domain="[('select_option','=','a')]"/>
                 <separator/>
                 <filter name="filter_selection_option" string="B selector" domain="[('select_option','=','b')]"/>
@@ -130,9 +138,10 @@
                 <separator/>
                 <filter name="filter_status_field" string="Status Filter having Done" domain="[('state_field','=','done')]"/>
 
+                <!--groupby features-->
                 <group expand='0' string="Group By">
                     <filter name="groupby_selection_option" string="Selection Option(A/B)" context="{'group_by':'select_option'}"/>
-                    <filter name="groupby_roll_number" string="GroupBy Roll Number" context="{'group_by':'roll_number'}"/>
+                    <filter name="groupby_students_number" string="GroupBy Roll Number" context="{'group_by':'students_number'}"/>
                     <filter name="groupby_boolean_field" string="GroupBy True/False" context="{'group_by':'boolean_field'}"/>
                     <filter name="groupby_date_field" string="GroupBy Only Date" context="{'group_by':'date_field'}"/>
                     <filter name="groupby_status_field" string="GroupBy StatusBar" context="{'group_by':'state_field'}"/>
@@ -140,20 +149,20 @@
             </search>
         </field>
     </record>
-
+    <!--Exam kanban view-->
     <record id="exam_details_kanban" model='ir.ui.view'>
         <field name="name">exam.details.kanban</field>
         <field name="model">exam.details</field>
         <field name="arch" type="xml">
             <kanban>
                 <field name="name_field"></field>
-                <field name="roll_number"></field>
+                <field name="students_number"></field>
                 <field name="exam_desc"></field>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card">
                             <span t-esc="record.name_field.raw_value"></span>
-                            <span t-esc="record.roll_number.raw_value"></span>
+                            <span t-esc="record.students_number.raw_value"></span>
                             <span t-esc="record.exam_desc.raw_value"></span>
                         </div>
                     </t>
@@ -162,7 +171,7 @@
         </field>
     </record>
 
-<!--Student -->
+<!--Student list view-->
     <record id="student_details_list" model='ir.ui.view'>
         <field name="name">student.details.list</field>
         <field name="model">student.details</field>
@@ -175,25 +184,26 @@
                 <field name="student_address"></field>
                 <field name="student_confirmation" widget="boolean_toggle"></field>
                 <field name="student_fees"></field>
-                <field name="student_other_exam_subject_name" widget="badge"></field>
+                <field name="student_gender" widget="badge"></field>
                 <field name="student_exam_date"></field>
                 <field name="student_exam_date_time" widget="remaining_days"></field>
                 <field name="student_exam_hallticket_attach"></field>
             </tree>
         </field>
     </record>
-
+    <!--Student form view-->
     <record id="student_details_form" model='ir.ui.view'>
         <field name="name">student.details.form</field>
         <field name="model">student.details</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_count_subject" type="object" class="oe_start_button" icon="fa-solid fa-book" help="This is smart button having student details according to subject id">
+                    <!--smart button-->
+                     <div class="oe_button_box" name="button_box">
+                        <button name="action_count_exam" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having exam details according to student id">
                             <div class="o_stat_info">
-                                <field name="subject_count" class="o_stat_value"/>
-                                <span class="o_stat_text">Subject records</span>
+                                <field name="exam_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Exam records</span>
                             </div>
                         </button>
                     </div>
@@ -210,7 +220,7 @@
                             <field name="student_fees"></field>
                             <field name="student_exam_date"></field>
                             <field name="student_exam_date_time"></field>
-                            <field name="student_other_exam_subject_name"></field>
+                            <field name="student_gender"></field>
                             <field name="student_exam_hallticket_attach"></field>
                         </group>
                     </group>
@@ -219,7 +229,7 @@
         </field>
     </record>
 
- <!--Faculty -->
+<!--Faculty list view-->
     <record id="faculty_details_list" model='ir.ui.view'>
         <field name="name">faculty.details.list</field>
         <field name="model">faculty.details</field>
@@ -232,14 +242,14 @@
                 <field name="faculty_address"></field>
                 <field name="faculty_subject_no"></field>
                 <field name="faculty_subject_exam_date"></field>
-                <field name="faculty_other_subject_name" widget="badge"></field>
+                <field name="faculty_gender" widget="badge"></field>
                 <field name="faculty_subject_exam_date_time" widget="remaining_days"></field>
                 <field name="faculty_present_on_exam_confirmation" widget="boolean_toggle"></field>
                 <field name="faculty_documents_attach"></field>
             </tree>
         </field>
     </record>
-
+    <!--Faculty form view-->
     <record id="faculty_details_form" model='ir.ui.view'>
         <field name="name">faculty.details.form</field>
         <field name="model">faculty.details</field>
@@ -257,7 +267,7 @@
                         </group>
                         <group>
                             <field name="faculty_subject_exam_date"></field>
-                            <field name="faculty_other_subject_name"></field>
+                            <field name="faculty_gender"></field>
                             <field name="faculty_subject_exam_date_time"></field>
                             <field name="faculty_present_on_exam_confirmation"></field>
                             <field name="faculty_documents_attach"></field>
@@ -268,8 +278,7 @@
         </field>
     </record>
 
-
- <!--Supervisor -->
+<!--Supervisor list view-->
     <record id="supervisor_details_list" model='ir.ui.view'>
         <field name="name">supervisor.details.list</field>
         <field name="model">supervisor.details</field>
@@ -277,9 +286,9 @@
             <tree>
                 <field name="supervisor_id"></field>
                 <field name="supervisor_name"></field>
+                <field name="supervisor_age"></field>
                 <field name="supervisor_fees" widget="badge"></field>
                 <field name="supervisor_address"></field>
-                <field name="total_no_of_supervisor"></field>
                 <field name="supervisor_present_exam_date" widget="remaining_days"></field>
                 <field name="supervisor_present_exam_date_time" widget="badge"></field>
                 <field name="supervisor_gender"></field>
@@ -288,7 +297,7 @@
             </tree>
         </field>
     </record>
-
+    <!--Supervisor form view-->
     <record id="supervisor_details_form" model='ir.ui.view'>
         <field name="name">supervisor.details.form</field>
         <field name="model">supervisor.details</field>
@@ -299,9 +308,9 @@
                         <group>
                             <field name="supervisor_id"></field>
                             <field name="supervisor_name"></field>
+                            <field name="supervisor_age"></field>
                             <field name="supervisor_fees"></field>
                             <field name="supervisor_address"></field>
-                            <field name="total_no_of_supervisor"></field>
                         </group>
                         <group>
                             <field name="supervisor_present_exam_date"></field>
@@ -316,7 +325,7 @@
         </field>
     </record>
 
- <!--Subject -->
+<!--Subject list view-->
     <record id="subject_details_list" model='ir.ui.view'>
         <field name="name">subject.details.list</field>
         <field name="model">subject.details</field>
@@ -336,7 +345,7 @@
             </tree>
         </field>
     </record>
-
+    <!--Subject form view-->
     <record id="subject_details_form" model='ir.ui.view'>
         <field name="name">subject.details.form</field>
         <field name="model">subject.details</field>

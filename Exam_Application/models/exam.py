@@ -1,8 +1,4 @@
 from odoo import models, fields, api
-from . import student
-from . import faculty
-from . import supervisor
-from . import subject
 from odoo.exceptions import ValidationError
 
 
@@ -10,28 +6,32 @@ class Examdetails(models.Model):
     _name = "exam.details"
     _description = "Exam informations"
 
-    name_field = fields.Char(string="Exam Details", required=True, size=10)
+    name_field = fields.Char(string="Exam name", required=True, size=10)
 
-    date_field = fields.Date(string="Only Date")
+    date_field = fields.Date(string="Exam Date")
 
-    date_time_field = fields.Datetime(string="Date Time")
+    date_time_field = fields.Datetime(string="Exam Date & Time")
 
-    boolean_field = fields.Boolean(string="(True/False)")
-    boolean_rating_field = fields.Boolean(string="Ratings")
+    boolean_field = fields.Boolean(string="Confirm to held the exam(True/False)")
 
-    amount_field = fields.Float(string="Amount")
+    amount_field = fields.Float(string="Exam helding fee")
 
-    roll_number = fields.Integer(string="Roll Number")
+    students_number = fields.Integer(
+        string="Enter total Number of students who are giving this exam"
+    )
     color_widget = fields.Integer(string="Color Picker")
 
-    select_option = fields.Selection(selection=[("a", "A"), ("b", "B")])
+    select_option = fields.Selection(
+        string="Select sections for students seating",
+        selection=[("a", "A"), ("b", "B")],
+    )
 
-    documents_attach = fields.Binary(string="Documents")
+    documents_attach = fields.Binary(string="Exam Hall picture")
 
-    exam_desc = fields.Text(string="Exam Description")
-    term_cond = fields.Text(string="Term and conditions")
+    exam_desc = fields.Text(string="Held Exam Description")
+    term_cond = fields.Text(string="Term and conditions related examination")
 
-    exam_college_address = fields.Html(string="Examination address")
+    exam_college_address = fields.Html(string="Examination hall address")
 
     relation_field1 = fields.Many2one(
         "res.partner", string="Many to one Relational field"
@@ -42,7 +42,7 @@ class Examdetails(models.Model):
     )
 
     relation_field3 = fields.One2many(
-        "student.details", "student_id", string="One to Many Relational field"
+        "student.details", "student_id", string="Assign student for exam"
     )
 
     state_field = fields.Selection(
@@ -51,32 +51,35 @@ class Examdetails(models.Model):
             ("in progress", "In Progress"),
             ("done", "Done"),
         ],
-        string="StatusBar",
+        string="State after giving exam",
         required=True,
         default="draft",
     )
 
+    # SQL constrains
     _sql_constraints = [
         (
             "unique_name",
             "unique (name_field)",
-            "Name must be unique cannot enter same names",
+            "Exam Name must be unique cannot enter same names",
         ),
         (
-            "check_roll_number",
-            "check(roll_number > 0)",
-            "Roll Number should be positive",
+            "check_students_number",
+            "check(students_number >= 0)",
+            "Number of students must be positive",
         ),
-    ]  # SQL Constraints
+    ]
 
-    @api.constrains("name_field", "exam_desc")  # python constraints
+    # [Decorator]-python constains
+    @api.constrains("name_field", "exam_desc")
     def constraints_name_description(self):
         for record in self:
             if record.name_field == record.exam_desc:
                 raise ValidationError(
-                    "Name and Exam description field must be different"
+                    "Exam Name and Exam description field content must be different"
                 )
 
+    # buttons state change- [widget statusbar]
     def action_draft(self):
         self.state_field = "draft"
 
@@ -86,7 +89,7 @@ class Examdetails(models.Model):
     def action_done(self):
         self.state_field = "done"
 
-    # student count
+    # for smart button-[student count]
     student_count = fields.Integer(
         string="No of Student Data", compute="count_student_data"
     )
@@ -108,7 +111,7 @@ class Examdetails(models.Model):
             "target": "current",
         }
 
-    # faculty count
+    # for smart button-[faculty count]
     faculty_count = fields.Integer(
         string="No of faculty Data", compute="count_faculty_data"
     )
@@ -130,7 +133,7 @@ class Examdetails(models.Model):
             "target": "current",
         }
 
-    # supervisor count
+    # for smart button-[supervisor count]
     supervisor_count = fields.Integer(
         string="No of supervisor Data", compute="count_supervisor_data"
     )
@@ -152,7 +155,7 @@ class Examdetails(models.Model):
             "target": "current",
         }
 
-    # subject count
+    # for smart button-[subject count]
     subject_count = fields.Integer(
         string="No of subject Data", compute="count_subject_data"
     )
