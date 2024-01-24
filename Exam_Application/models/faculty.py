@@ -4,6 +4,8 @@ from odoo import models, fields
 class Facultydetails(models.Model):
     _name = "faculty.details"
     _description = "Faculty related informations"
+    _order = "faculty_fees asc"
+    _rec_name = "faculty_name"
 
     faculty_id = fields.Many2one(
         "exam.details", string="Faculty's subject exam details"
@@ -40,3 +42,24 @@ class Facultydetails(models.Model):
     )
 
     faculty_documents_attach = fields.Binary(string="Attach Faculty Identity documents")
+
+    faculty_state_field = fields.Selection(
+        selection=[
+            ("cancel", "Cancel"),
+            ("in progress", "In Progress"),
+            ("done", "Done"),
+        ],
+        string="State of Question paper for exam",
+        required=True,
+        default="cancel",
+    )
+
+    # buttons state change- [widget statusbar]
+    def faculty_action_button(self):
+        self.faculty_state_field = "cancel"
+
+    def faculty_in_progress_button(self):
+        self.faculty_state_field = "in progress"
+
+    def faculty_action_done(self):
+        self.faculty_state_field = "done"

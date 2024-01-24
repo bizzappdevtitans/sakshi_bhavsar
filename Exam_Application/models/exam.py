@@ -5,6 +5,8 @@ from odoo.exceptions import ValidationError
 class Examdetails(models.Model):
     _name = "exam.details"
     _description = "Exam informations"
+    _order = "date_field asc"
+    _rec_name = "name_field"
 
     name_field = fields.Char(string="Exam name", required=True, size=10)
 
@@ -65,7 +67,7 @@ class Examdetails(models.Model):
         ),
         (
             "check_students_number",
-            "check(students_number >= 0)",
+            "check(students_number > 0)",
             "Number of students must be positive",
         ),
     ]
@@ -76,7 +78,7 @@ class Examdetails(models.Model):
         for record in self:
             if record.name_field == record.exam_desc:
                 raise ValidationError(
-                    "Exam Name and Exam description field content must be different"
+                    "Exam name and Exam description fields content must be different"
                 )
 
     # buttons state change- [widget statusbar]
@@ -128,7 +130,7 @@ class Examdetails(models.Model):
             "type": "ir.actions.act_window",
             "name": "Faculty-Exam details",
             "res_model": "faculty.details",
-            "domain": [("faculty_id", "=", self.id)],
+            "domain": [("faculty_id", "=", self.id), ("faculty_count", "=", 1)],
             "view_mode": "tree,form",
             "target": "current",
         }

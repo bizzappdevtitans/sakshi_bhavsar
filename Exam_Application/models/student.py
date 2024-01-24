@@ -4,6 +4,8 @@ from odoo import models, fields, api
 class Studentdetails(models.Model):
     _name = "student.details"
     _description = "Student related informations"
+    _order = "student_name asc"
+    _rec_name = "student_name"
 
     student_id = fields.Many2one("exam.details", string="Student's exam details")
     student_examsubject_id = fields.Many2one(

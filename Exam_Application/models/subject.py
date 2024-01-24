@@ -4,6 +4,8 @@ from odoo import models, fields
 class Facultydetails(models.Model):
     _name = "subject.details"
     _description = "Examination Subject related informations"
+    _order = "subject_chapters asc"
+    _rec_name="subject_name"
 
     subject_id = fields.Many2one("exam.details", string="Subject Exam details")
     subject_faculty_id = fields.Many2one(
