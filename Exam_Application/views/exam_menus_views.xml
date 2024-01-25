@@ -6,31 +6,31 @@
 
     <menuitem
         id="exam_details"
-        name="Examination Hall details"
+        name="Exam Details"
         parent="exam_menu"
         action="action_exam_details"/>
 
     <menuitem
         id="student_details"
-        name="Student details"
+        name="Students"
         parent="exam_menu"
         action="action_student_details" />
 
     <menuitem
         id="faculty_details"
-        name="Faculty details"
+        name="Faculties"
         parent="exam_menu"
         action="action_faculty_details" />
 
     <menuitem
         id="supervisor_details"
-        name="Supervisor details"
+        name="Supervisors"
         parent="exam_menu"
         action="action_supervisor_details"/>
 
     <menuitem
         id="subject_details"
-        name="Subject details"
+        name="Subjects"
         parent="exam_menu"
         action="action_examsubject_details" />
 </odoo>

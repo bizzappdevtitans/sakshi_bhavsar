@@ -1,15 +1,17 @@
 from odoo import models, fields
 
 
-class Facultydetails(models.Model):
+class Subjectdetails(models.Model):
     _name = "subject.details"
     _description = "Examination Subject related informations"
     _order = "subject_chapters asc"
-    _rec_name="subject_name"
+    _rec_name = "subject_name"
 
-    subject_id = fields.Many2one("exam.details", string="Subject Exam details")
+    subject_id = fields.Many2one(
+        comodel_name="exam.details", string="Subject Exam details"
+    )
     subject_faculty_id = fields.Many2one(
-        "faculty.details", string="Subject Faculty details"
+        comodel_name="faculty.details", string="Subject Faculty details"
     )
 
     subject_name = fields.Char(string="Subject Name")
@@ -22,19 +24,9 @@ class Facultydetails(models.Model):
         string="No of textbooks to be read for the exam"
     )
 
-    subject_exam_date = fields.Date(string="Subject Exam Date")
+    subject_exam_start_date = fields.Date(string="Subject Exam Date")
 
-    subject_exam_date_time = fields.Datetime(string="Subject Exam Date & Time")
-
-    other_subject_name = fields.Selection(
-        string="Select another subject for second exam",
-        selection=[
-            ("python", "Python"),
-            ("xml", "XML"),
-            ("javascript", "Javascript"),
-            ("sql", "SQL"),
-        ],
-    )
+    subject_exam_end_date_time = fields.Datetime(string="Subject Exam Date & Time")
 
     exam_subject_confirmation = fields.Boolean(
         string="Confirm to take exam of this subject(True/False)"

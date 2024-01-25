@@ -2,14 +2,13 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
 
-class Facultydetails(models.Model):
+class Supervisordetails(models.Model):
     _name = "supervisor.details"
     _description = "Exam supervisor related informations"
-    _order = "supervisor_age asc"
     _rec_name = "supervisor_name"
 
     supervisor_id = fields.Many2one(
-        "exam.details", string="Supervisor Supervising exam details"
+        comodel_name="exam.details", string="Supervisor Supervising exam details"
     )
 
     supervisor_name = fields.Char(string="Supervisor Name")
@@ -18,7 +17,7 @@ class Facultydetails(models.Model):
 
     supervisor_address = fields.Text(string="Supervisor Adress")
 
-    supervisor_present_exam_date = fields.Date(string="Supervisor Supervising Date")
+    supervisor_start_exam_date = fields.Date(string="Supervisor Supervising Date")
 
     supervisor_age = fields.Integer(string="Supervisor age")
 
@@ -32,7 +31,7 @@ class Facultydetails(models.Model):
                     "Supervisors age limit is 25 years,Age must be 25 or greater"
                 )
 
-    supervisor_present_exam_date_time = fields.Datetime(
+    supervisor_end_exam_date_time = fields.Datetime(
         string="Supervisor Supervising Date & Time"
     )
 
@@ -41,7 +40,7 @@ class Facultydetails(models.Model):
         selection=[("male", "Male"), ("female", "Female"), ("other", "Other")],
     )
 
-    supervisor_present_on_exam_confirmation = fields.Boolean(
+    supervisor_available_on_exam = fields.Boolean(
         string="Confirm to be present for supervising(True/False)"
     )
 

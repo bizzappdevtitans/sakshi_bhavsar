@@ -7,9 +7,11 @@ class Studentdetails(models.Model):
     _order = "student_name asc"
     _rec_name = "student_name"
 
-    student_id = fields.Many2one("exam.details", string="Student's exam details")
+    student_id = fields.Many2one(
+        comodel_name="exam.details", string="Student's exam details"
+    )
     student_examsubject_id = fields.Many2one(
-        "subject.details", string="Student's Exam subject details"
+        comodel_name="subject.details", string="Student's Exam subject details"
     )
 
     student_name = fields.Char(string="Student Name")
@@ -20,7 +22,7 @@ class Studentdetails(models.Model):
 
     student_enrollment_no = fields.Integer(string="Student Enrollement number")
 
-    student_exam_date_time = fields.Datetime(string="Student Exam Date & Time")
+    student_exam_end_date_time = fields.Datetime(string="Student Exam Date & Time")
 
     student_gender = fields.Selection(
         string="Select student gender",
@@ -40,26 +42,26 @@ class Studentdetails(models.Model):
     )
 
     # for smart button-[exam count]
-    exam_count = fields.Integer(string="No of exam Data", compute="count_exam_data")
+    exam_count = fields.Integer(string="Total Exams", compute="count_exam_data")
 
     def count_exam_data(self):
         for rec in self:
             exam_count = self.env["exam.details"].search_count(
-                [("relation_field3", "=", rec.id)]
+                [("assign_students_exam", "=", rec.id)]
             )
             rec.exam_count = exam_count
 
     def action_count_exam(self):
         return {
             "type": "ir.actions.act_window",
-            "name": "Exam details count",
+            "name": "Exam Details",
             "res_model": "exam.details",
-            "domain": [("relation_field3", "=", self.id)],
+            "domain": [("assign_students_exam", "=", self.id)],
             "view_mode": "tree,form",
-            "target": "current",
+            "target": "new",
         }
 
-    student_exam_date = fields.Date(
+    student_exam_start_date = fields.Date(
         string="Student exam Date",
         compute="onchange_date_method",
         store=True,
@@ -69,16 +71,17 @@ class Studentdetails(models.Model):
     # [onchange]- Decorator
     @api.onchange("student_id")
     def onchange_date_method(self):
-        date_today = fields.Date.today()
-        if self.student_exam_date != date_today:
-            self.student_exam_date = date_today
-            return {
-                "warning": {
-                    "title": "Date will change by method onchange",
-                    "message": "you have changed the student id, now the exam date"
-                    " will be automatically changed with todays date.",
+        todays_date = fields.Date.today()
+        for rec in self:
+            if rec.student_exam_start_date != todays_date:
+                rec.student_exam_start_date = todays_date
+                return {
+                    "warning": {
+                        "title": "Date will change by method onchange",
+                        "message": "you have changed the student id, now the exam date"
+                        " will be automatically changed with todays date.",
+                    }
                 }
-            }
 
     # [depends]- Decorator
     # @api.depends("student_id")

@@ -3,15 +3,15 @@ from odoo import models, fields
 
 class Facultydetails(models.Model):
     _name = "faculty.details"
-    _description = "Faculty related informations"
+    _description = "Faculty Informations"
     _order = "faculty_fees asc"
     _rec_name = "faculty_name"
 
     faculty_id = fields.Many2one(
-        "exam.details", string="Faculty's subject exam details"
+        comodel_name="exam.details", string="Faculty's subject exam details"
     )
     faculty_subject_id = fields.Many2one(
-        "subject.details", string="Faculty's subject details"
+        comodel_name="subject.details", string="Faculty's subject details"
     )
 
     faculty_name = fields.Char(string="Faculty Name")
@@ -22,9 +22,9 @@ class Facultydetails(models.Model):
 
     faculty_subject_no = fields.Integer(string="Faculty subject code number")
 
-    faculty_subject_exam_date = fields.Date(string="Faculty subject exam Date")
+    faculty_subject_starting_exam_date = fields.Date(string="Faculty subject exam Date")
 
-    faculty_subject_exam_date_time = fields.Datetime(
+    faculty_subject_ending_exam_date_time = fields.Datetime(
         string="Faculty subject exam Date & Time"
     )
 
@@ -37,29 +37,29 @@ class Facultydetails(models.Model):
         ],
     )
 
-    faculty_present_on_exam_confirmation = fields.Boolean(
-        string="Confirm to be present on the exam day(True/False)"
+    faculty_availability = fields.Boolean(
+        string="Confirm availability on the exam day(True/False)"
     )
 
     faculty_documents_attach = fields.Binary(string="Attach Faculty Identity documents")
 
-    faculty_state_field = fields.Selection(
+    faculty_states = fields.Selection(
         selection=[
             ("cancel", "Cancel"),
-            ("in progress", "In Progress"),
+            ("in_progress", "In Progress"),
             ("done", "Done"),
         ],
         string="State of Question paper for exam",
         required=True,
-        default="cancel",
+        default="in_progress",
     )
 
     # buttons state change- [widget statusbar]
     def faculty_action_button(self):
-        self.faculty_state_field = "cancel"
+        self.write({"faculty_states": "cancel"})
 
     def faculty_in_progress_button(self):
-        self.faculty_state_field = "in progress"
+        self.write({"faculty_states": "in_progress"})
 
     def faculty_action_done(self):
-        self.faculty_state_field = "done"
+        self.write({"faculty_states": "done"})
