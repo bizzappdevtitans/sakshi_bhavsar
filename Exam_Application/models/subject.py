@@ -1,4 +1,5 @@
-from odoo import models, fields
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class Subjectdetails(models.Model):
@@ -33,3 +34,16 @@ class Subjectdetails(models.Model):
     )
 
     subject_textbooks = fields.Binary(string="Attach subject textbooks")
+
+    # [constraints]- Decorator
+    @api.constrains("subject_textbooks_no")
+    def constraints_subject_textbook_no(self):
+        for record in self:
+            if record.subject_textbooks_no < 3:
+                raise ValidationError(
+                    "No of textbooks for exam to study,cannot be more than 3"
+                )
+            elif record.subject_textbooks_no < 0:
+                raise ValidationError("Enter positive numbers")
+            elif record.subject_textbooks_no == 0:
+                raise ValidationError("Enter atleast 1 textbook")

@@ -12,7 +12,8 @@
                 <field name="student_name" widget="badge"></field>
                 <field name="student_address"></field>
                 <field name="student_confirmation" widget="boolean_toggle"></field>
-                <field name="student_fees"></field>
+                <field name="student_fees" sum="Total" widget="monetary"></field>
+                <field name="student_exam_fees" sum="Total" widget="monetary"></field>
                 <field name="student_gender" widget="badge"></field>
                 <field name="student_exam_start_date"></field>
                 <field name="student_exam_end_date_time" widget="remaining_days"></field>
@@ -26,6 +27,9 @@
         <field name="model">student.details</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button string="Total Fees" class="btn-primary" name="action_fees_calculation" type="object"/>
+                </header>
                 <sheet>
                     <!--smart button-->
                      <div class="oe_button_box" name="button_box">
@@ -47,6 +51,7 @@
                         </group>
                         <group>
                             <field name="student_fees"></field>
+                            <field name="student_exam_fees"></field>
                             <field name="student_exam_start_date"></field>
                             <field name="student_exam_end_date_time"></field>
                             <field name="student_gender"></field>

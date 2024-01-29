@@ -4,7 +4,6 @@ from odoo import models, fields, api
 class Studentdetails(models.Model):
     _name = "student.details"
     _description = "Student related informations"
-    _order = "student_name asc"
     _rec_name = "student_name"
 
     student_id = fields.Many2one(
@@ -16,7 +15,7 @@ class Studentdetails(models.Model):
 
     student_name = fields.Char(string="Student Name")
 
-    student_fees = fields.Float(string="Student Fees")
+    student_fees = fields.Float(string="Total Fees (including exam fees-500)")
 
     student_address = fields.Text(string="Student Address")
 
@@ -41,6 +40,14 @@ class Studentdetails(models.Model):
         string="Attach Student Exam Hallticket"
     )
 
+    # function of fees calculation on button click
+    def action_fees_calculation(self):
+        for rec in self:
+            student_fees = rec.student_fees - 500
+            rec.student_exam_fees = student_fees
+
+    student_exam_fees = fields.Float(string="Student fees(excluding 500 exam fees)")
+
     # for smart button-[exam count]
     exam_count = fields.Integer(string="Total Exams", compute="count_exam_data")
 
@@ -52,14 +59,26 @@ class Studentdetails(models.Model):
             rec.exam_count = exam_count
 
     def action_count_exam(self):
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Exam Details",
-            "res_model": "exam.details",
-            "domain": [("assign_students_exam", "=", self.id)],
-            "view_mode": "tree,form",
-            "target": "new",
-        }
+        if self.exam_count == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Exam Details",
+                "res_model": "exam.details",
+                "domain": [("assign_students_exam", "=", self.id)],
+                "view_type": "form",
+                "res_id": self.exam_count,
+                "view_mode": "form",
+                "target": "new",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Exam Details",
+                "res_model": "exam.details",
+                "domain": [("assign_students_exam", "=", self.id)],
+                "view_mode": "tree,form",
+                "target": "new",
+            }
 
     student_exam_start_date = fields.Date(
         string="Student exam Date",
@@ -69,7 +88,7 @@ class Studentdetails(models.Model):
     )
 
     # [onchange]- Decorator
-    @api.onchange("student_id")
+    @api.onchange("student_name")
     def onchange_date_method(self):
         todays_date = fields.Date.today()
         for rec in self:
@@ -78,22 +97,7 @@ class Studentdetails(models.Model):
                 return {
                     "warning": {
                         "title": "Date will change by method onchange",
-                        "message": "you have changed the student id, now the exam date"
+                        "message": "you have changed your name, now the exam date"
                         " will be automatically changed with todays date.",
                     }
                 }
-
-    # [depends]- Decorator
-    # @api.depends("student_id")
-    # def depends_date_method(self):
-    # date_today = fields.Date.today()
-    # if self.student_exam_date != date_today:
-    # self.student_exam_date = date_today
-    # return
-    # {
-    # "warning": {
-    # "title": "Date will change ny method depends",
-    # "message": "you have changed the student id, now the exam date"
-    # " will be automatically changed with todays date.",
-    # }
-    # }

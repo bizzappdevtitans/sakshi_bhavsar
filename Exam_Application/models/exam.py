@@ -7,6 +7,8 @@ class Examdetails(models.Model):
     _description = "Exam Informations"
     _rec_name = "seating_option"
 
+    exam_name = fields.Char(string="Enter exam name")
+
     exam_start_date = fields.Date(string="Exam Starting Date")
 
     exam_end_date_time = fields.Datetime(string="Exam ending Date & Time")
@@ -20,7 +22,7 @@ class Examdetails(models.Model):
 
     seating_option = fields.Selection(
         string="Select sections for students seating",
-        selection=[("a", "A"), ("b", "B")],
+        selection=[("a", "A"), ("b", "B"), ("c", "C"), ("d", "D"), ("e", "E")],
     )
 
     attach_documents = fields.Binary(string="Exam Hall picture")
@@ -70,12 +72,12 @@ class Examdetails(models.Model):
     ]
 
     # [Decorator]-python constains
-    @api.constrains("exam_college_address", "exam_description")
+    @api.constrains("term_conditions", "exam_description")
     def constraints_college_name_description(self):
         for record in self:
-            if record.exam_college_address == record.exam_description:
+            if record.term_conditions == record.exam_description:
                 raise ValidationError(
-                    "Exam address and Exam description fields content must be different"
+                    "term conditions box and Exam description fields content must be different"
                 )
 
     # buttons state change- [widget statusbar]
@@ -101,20 +103,26 @@ class Examdetails(models.Model):
             rec.student_count = student_count
 
     def action_count_student(self):
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Students",
-            "res_model": "student.details",
-            "domain": [
-                "|",
-                ("student_id", "in", [self.id]),
-                "|",
-                ("student_count", "=", 1),
-                ("student_count", ">", 1),
-            ],
-            "view_mode": "form,tree",
-            "target": "new",
-        }
+        if self.student_count == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Students",
+                "res_model": "student.details",
+                "view_type": "form",
+                "view_mode": "form",
+                "res_id": self.student_count,
+                "domain": [("student_id", "=", self.id)],
+                "target": "new",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Students",
+                "res_model": "student.details",
+                "view_mode": "tree,form",
+                "domain": [("student_id", "=", self.id)],
+                "target": "new",
+            }
 
     # for smart button-[supervisor count]
     supervisor_count = fields.Integer(
@@ -129,11 +137,23 @@ class Examdetails(models.Model):
             rec.supervisor_count = supervisor_count
 
     def action_count_supervisor(self):
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Supervisors",
-            "res_model": "supervisor.details",
-            "domain": [("supervisor_id", "=", self.id)],
-            "view_mode": "tree,form",
-            "target": "new",
-        }
+        if self.supervisor_count == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Supervisors",
+                "res_model": "supervisor.details",
+                "view_type": "form",
+                "view_mode": "form",
+                "res_id": self.supervisor_count,
+                "domain": [("supervisor_id", "=", self.id)],
+                "target": "new",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Supervisors",
+                "res_model": "supervisor.details",
+                "view_mode": "tree,form",
+                "domain": [("supervisor_id", "=", self.id)],
+                "target": "new",
+            }

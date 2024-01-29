@@ -21,6 +21,7 @@ class Supervisordetails(models.Model):
 
     supervisor_age = fields.Integer(string="Supervisor age")
 
+    # [constraints]- Decorator
     @api.constrains("supervisor_age")
     def constraints_supervisor_age(self):
         for record in self:
@@ -47,3 +48,18 @@ class Supervisordetails(models.Model):
     supervisor_documents_attach = fields.Binary(
         string="Attach Supervisor Identity documents"
     )
+
+    # [depends]- Decorator
+    @api.depends("supervisor_id")
+    def depends_date_method(self):
+        date_today = fields.Date.today()
+        if self.supervisor_start_exam_date != date_today:
+            self.supervisor_start_exam_date = date_today
+            return
+            {
+                "warning": {
+                    "title": "Date will change ny method depends",
+                    "message": "you have changed the supervisor id, now the exam date"
+                    "will be automatically changed with todays date.",
+                }
+            }
