@@ -7,6 +7,14 @@ class Examdetails(models.Model):
     _description = "Exam Informations"
     _rec_name = "seating_option"
 
+    exam_sequence_number = fields.Char(
+        string="Exam sequence",
+        required=True,
+        readonly=True,
+        copy=False,
+        default=lambda self: self.env["ir.sequence"].next_by_code("exam.details"),
+    )
+
     exam_name = fields.Char(string="Enter exam name")
 
     exam_start_date = fields.Date(string="Exam Starting Date")
@@ -21,8 +29,17 @@ class Examdetails(models.Model):
     color_widget = fields.Integer(string="Color Picker")
 
     seating_option = fields.Selection(
-        string="Select sections for students seating",
-        selection=[("a", "A"), ("b", "B"), ("c", "C"), ("d", "D"), ("e", "E")],
+        string="Select sections for seating",
+        selection=[
+            ("a", "A"),
+            ("b", "B"),
+            ("c", "C"),
+            ("d", "D"),
+            ("e", "E"),
+            ("f", "F"),
+            ("g", "G"),
+            ("h", "H"),
+        ],
     )
 
     attach_documents = fields.Binary(string="Exam Hall picture")

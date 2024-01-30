@@ -4,12 +4,20 @@ from odoo import models, fields
 class Facultydetails(models.Model):
     _name = "faculty.details"
     _description = "Faculty Informations"
-    _order = "faculty_fees asc"
     _rec_name = "faculty_name"
 
     faculty_id = fields.Many2one(
         comodel_name="exam.details", string="Faculty's subject exam details"
     )
+
+    faculty_sequence_number = fields.Integer(
+        string="Faculty sequence number",
+        required=True,
+        readonly=True,
+        copy=False,
+        default=lambda self: self.env['ir.sequence'].next_by_code("faculty.details")
+    )
+
     faculty_subject_id = fields.Many2one(
         comodel_name="subject.details", string="Faculty's subject details"
     )

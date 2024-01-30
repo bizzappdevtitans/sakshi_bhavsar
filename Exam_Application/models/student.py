@@ -59,26 +59,14 @@ class Studentdetails(models.Model):
             rec.exam_count = exam_count
 
     def action_count_exam(self):
-        if self.exam_count == 1:
-            return {
-                "type": "ir.actions.act_window",
-                "name": "Exam Details",
-                "res_model": "exam.details",
-                "domain": [("assign_students_exam", "=", self.id)],
-                "view_type": "form",
-                "res_id": self.exam_count,
-                "view_mode": "form",
-                "target": "new",
-            }
-        else:
-            return {
-                "type": "ir.actions.act_window",
-                "name": "Exam Details",
-                "res_model": "exam.details",
-                "domain": [("assign_students_exam", "=", self.id)],
-                "view_mode": "tree,form",
-                "target": "new",
-            }
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Exam Details",
+            "res_model": "exam.details",
+            "domain": [("assign_students_exam", "=", self.id)],
+            "view_mode": "tree,form",
+            "target": "new",
+        }
 
     student_exam_start_date = fields.Date(
         string="Student exam Date",
@@ -88,7 +76,7 @@ class Studentdetails(models.Model):
     )
 
     # [onchange]- Decorator
-    @api.onchange("student_name")
+    @api.onchange("student_fees")
     def onchange_date_method(self):
         todays_date = fields.Date.today()
         for rec in self:
@@ -97,7 +85,7 @@ class Studentdetails(models.Model):
                 return {
                     "warning": {
                         "title": "Date will change by method onchange",
-                        "message": "you have changed your name, now the exam date"
+                        "message": "you have changed your exam fees, now the exam date"
                         " will be automatically changed with todays date.",
                     }
                 }
