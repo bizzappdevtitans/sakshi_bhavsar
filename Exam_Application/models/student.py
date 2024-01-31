@@ -6,8 +6,25 @@ class Studentdetails(models.Model):
     _description = "Student related informations"
     _rec_name = "student_name"
 
+    student_sequence_number = fields.Integer(
+        string="Student sequence",
+        required=True,
+        readonly=True,
+        copy=False,
+        default=0,
+    )
+
+    # sequence number generate using create() (orm method) and api.model(decorator)
+    @api.model
+    def create(self, vals):
+        vals["student_sequence_number"] = self.env["ir.sequence"].next_by_code(
+            "student.details"
+        )
+        return super(Studentdetails, self).create(vals)
+
     student_id = fields.Many2one(
-        comodel_name="exam.details", string="Student's exam details"
+        comodel_name="exam.details",
+        string="Student's exam details",
     )
     student_examsubject_id = fields.Many2one(
         comodel_name="subject.details", string="Student's Exam subject details"
@@ -30,6 +47,12 @@ class Studentdetails(models.Model):
             ("female", "Female"),
             ("other", "Other"),
         ],
+    )
+
+    students_exam_seatings = fields.One2many(
+        comodel_name="exam.details",
+        inverse_name="assign_students_exam",
+        string="Student exam seatings",
     )
 
     student_confirmation = fields.Boolean(
@@ -59,14 +82,26 @@ class Studentdetails(models.Model):
             rec.exam_count = exam_count
 
     def action_count_exam(self):
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Exam Details",
-            "res_model": "exam.details",
-            "domain": [("assign_students_exam", "=", self.id)],
-            "view_mode": "tree,form",
-            "target": "new",
-        }
+        if self.exam_count == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Exam Details",
+                "res_model": "exam.details",
+                "view_type": "form",
+                "view_mode": "form",
+                "res_id": self.student_id.id,
+                "domain": [("assign_students_exam", "=", self.id)],
+                "target": "new",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Exam Details",
+                "res_model": "exam.details",
+                "view_mode": "tree,form",
+                "domain": [("assign_students_exam", "=", self.id)],
+                "target": "new",
+            }
 
     student_exam_start_date = fields.Date(
         string="Student exam Date",

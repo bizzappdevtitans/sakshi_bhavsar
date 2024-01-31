@@ -8,6 +8,9 @@
     "data": [
         "data/exam_sequence.xml",
         "data/faculty_sequence.xml",
+        "data/student_sequence.xml",
+        "data/subject_sequence.xml",
+        "data/supervisor_sequence.xml",
         "views/exam_views.xml",
         "views/student_views.xml",
         "views/faculty_views.xml",

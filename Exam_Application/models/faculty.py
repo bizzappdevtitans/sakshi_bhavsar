@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Facultydetails(models.Model):
@@ -15,8 +15,16 @@ class Facultydetails(models.Model):
         required=True,
         readonly=True,
         copy=False,
-        default=lambda self: self.env['ir.sequence'].next_by_code("faculty.details")
+        default=0,
     )
+
+    # sequence number generate using create() (orm method) and api.model(decorator)
+    @api.model
+    def create(self, vals):
+        vals["faculty_sequence_number"] = self.env["ir.sequence"].next_by_code(
+            "faculty.details"
+        )
+        return super(Facultydetails, self).create(vals)
 
     faculty_subject_id = fields.Many2one(
         comodel_name="subject.details", string="Faculty's subject details"

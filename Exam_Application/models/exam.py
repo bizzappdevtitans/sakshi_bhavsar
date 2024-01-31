@@ -12,8 +12,16 @@ class Examdetails(models.Model):
         required=True,
         readonly=True,
         copy=False,
-        default=lambda self: self.env["ir.sequence"].next_by_code("exam.details"),
+        default="New Sequence",
     )
+
+    # sequence number generate using create() (orm method) and api.model(decorator)
+    @api.model
+    def create(self, vals):
+        vals["exam_sequence_number"] = self.env["ir.sequence"].next_by_code(
+            "exam.details"
+        )
+        return super(Examdetails, self).create(vals)
 
     exam_name = fields.Char(string="Enter exam name")
 
@@ -38,7 +46,6 @@ class Examdetails(models.Model):
             ("e", "E"),
             ("f", "F"),
             ("g", "G"),
-            ("h", "H"),
         ],
     )
 
@@ -61,6 +68,12 @@ class Examdetails(models.Model):
         comodel_name="student.details",
         inverse_name="student_id",
         string="Assign student for exam",
+    )
+
+    assign_supervisors_exam = fields.One2many(
+        comodel_name="supervisor.details",
+        inverse_name="supervisor_id",
+        string="Assign supervisor for exam",
     )
 
     states = fields.Selection(
@@ -127,7 +140,7 @@ class Examdetails(models.Model):
                 "res_model": "student.details",
                 "view_type": "form",
                 "view_mode": "form",
-                "res_id": self.student_count,
+                "res_id": self.assign_students_exam.id,
                 "domain": [("student_id", "=", self.id)],
                 "target": "new",
             }
@@ -161,7 +174,7 @@ class Examdetails(models.Model):
                 "res_model": "supervisor.details",
                 "view_type": "form",
                 "view_mode": "form",
-                "res_id": self.supervisor_count,
+                "res_id": self.assign_supervisors_exam.id,
                 "domain": [("supervisor_id", "=", self.id)],
                 "target": "new",
             }

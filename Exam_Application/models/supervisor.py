@@ -6,16 +6,40 @@ class Supervisordetails(models.Model):
     _name = "supervisor.details"
     _description = "Exam supervisor related informations"
     _rec_name = "supervisor_name"
+    _inherit = "exam.details"
 
     supervisor_id = fields.Many2one(
-        comodel_name="exam.details", string="Supervisor Supervising exam details"
+        comodel_name="exam.details",
+        string="Supervisor Supervising exam details",
     )
 
+    supervisor_sequence_number = fields.Char(
+        string="Supervisor sequence",
+        required=True,
+        readonly=True,
+        copy=False,
+        default="New Sequence",
+    )
+
+    # sequence number generate using create() (orm method) and api.model(decorator)
+    @api.model
+    def create(self, vals):
+        vals["supervisor_sequence_number"] = self.env["ir.sequence"].next_by_code(
+            "supervisor.details"
+        )
+        return super(Supervisordetails, self).create(vals)
+
     supervisor_name = fields.Char(string="Supervisor Name")
+    supervisor_address = fields.Text(string="Supervisor Adress")
+
+    # write()-orm method for adding data in supervisor
+    @api.model
+    def write(self, vals):
+        vals = {"supervisor_age": 34}
+        record = super(Supervisordetails, self).write(vals)
+        return record
 
     supervisor_fees = fields.Float(string="Supervisor supervising Fees")
-
-    supervisor_address = fields.Text(string="Supervisor Adress")
 
     supervisor_start_exam_date = fields.Date(string="Supervisor Supervising Date")
 

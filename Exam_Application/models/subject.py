@@ -15,6 +15,22 @@ class Subjectdetails(models.Model):
         comodel_name="faculty.details", string="Subject Faculty details"
     )
 
+    subject_sequence_number = fields.Char(
+        string="Subject sequence",
+        required=True,
+        record=True,
+        copy=False,
+        default="New Sequence",
+    )
+
+    # sequence number generate using create() (orm method) and api.model(decorator)
+    @api.model
+    def create(self, vals):
+        vals["subject_sequence_number"] = self.env["ir.sequence"].next_by_code(
+            "subject.details"
+        )
+        return super(Subjectdetails, self).create(vals)
+
     subject_name = fields.Char(string="Subject Name")
 
     subject_chapters = fields.Float(string="Subject chapters included for exam")
@@ -39,7 +55,7 @@ class Subjectdetails(models.Model):
     @api.constrains("subject_textbooks_no")
     def constraints_subject_textbook_no(self):
         for record in self:
-            if record.subject_textbooks_no < 3:
+            if record.subject_textbooks_no > 3:
                 raise ValidationError(
                     "No of textbooks for exam to study,cannot be more than 3"
                 )

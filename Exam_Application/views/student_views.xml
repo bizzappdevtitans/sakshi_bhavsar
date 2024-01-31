@@ -28,9 +28,15 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button string="Total Fees" class="btn-primary" name="action_fees_calculation" type="object"/>
+                    <button string="Total Fees" class="btn-primary" name="action_fees_calculation" type="object"  help="this is a button having functionality of calculating total fees excluding 500 for exam fees"/>
                 </header>
                 <sheet>
+                    <!--sequence number-->
+                    <div class="oe_title">
+                        <h3>
+                            <field name="student_sequence_number" readonly="1"/>
+                        </h3>
+                    </div>
                     <!--smart button-->
                      <div class="oe_button_box" name="button_box">
                         <button name="action_count_exam" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having exam details according to student id details">
