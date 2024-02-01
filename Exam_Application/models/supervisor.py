@@ -25,23 +25,29 @@ class Supervisordetails(models.Model):
     @api.model
     def create(self, vals):
         vals["supervisor_sequence_number"] = self.env["ir.sequence"].next_by_code(
-            "supervisor.details"
-        )
+                        "supervisor.details")
         return super(Supervisordetails, self).create(vals)
 
     supervisor_name = fields.Char(string="Supervisor Name")
-    supervisor_address = fields.Text(string="Supervisor Adress")
 
-    # write()-orm method for adding data in supervisor
-    @api.model
-    def write(self, vals):
-        vals = {"supervisor_age": 34}
-        record = super(Supervisordetails, self).write(vals)
-        return record
+    # create()-orm method for adding data in supervisor if gender is female miss will
+    # added and if male then mr will be added
+    # @api.model
+    """def create(self, vals):
+        res = super(Supervisordetails, self).create(vals)
+        if vals.get("supervisor_gender") == "male":
+            res["supervisor_name"] = "Mr. " + res["supervisor_name"]
+        elif vals.get("supervisor_gender") == "female":
+            res["supervisor_name"] = "Miss. " + res["supervisor_name"]
+        else:
+            return res
+        return res"""
 
     supervisor_fees = fields.Float(string="Supervisor supervising Fees")
 
     supervisor_start_exam_date = fields.Date(string="Supervisor Supervising Date")
+
+    supervisor_address = fields.Text(string="Supervisor Adress")
 
     supervisor_age = fields.Integer(string="Supervisor age")
 
@@ -73,7 +79,7 @@ class Supervisordetails(models.Model):
         string="Attach Supervisor Identity documents"
     )
 
-    # [depends]- Decorator
+    # [depends()]- Decorator
     @api.depends("supervisor_id")
     def depends_date_method(self):
         date_today = fields.Date.today()

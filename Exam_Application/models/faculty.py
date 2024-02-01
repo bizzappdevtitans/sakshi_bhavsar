@@ -26,6 +26,19 @@ class Facultydetails(models.Model):
         )
         return super(Facultydetails, self).create(vals)
 
+    # button for write()-orm method for adding data in faculty
+    @api.depends()
+    def action_button_write(self):
+        column_id = self.env["faculty.details"].browse(7)  # update 7th record
+        column_id.write(
+            {
+                "faculty_name": "BBBB",
+                "faculty_fees": 30000.5,
+                "faculty_address": "ADDRESS OF FACULTYSS",
+                "faculty_gender": "male",
+            }
+        )
+
     faculty_subject_id = fields.Many2one(
         comodel_name="subject.details", string="Faculty's subject details"
     )

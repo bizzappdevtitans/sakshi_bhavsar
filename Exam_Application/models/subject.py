@@ -31,6 +31,36 @@ class Subjectdetails(models.Model):
         )
         return super(Subjectdetails, self).create(vals)
 
+    # search()-orm method for searching records returns result id's
+    subject_chapters_search = fields.Char(
+        string="Subject chapter by search orm", compute="action_button_search"
+    )
+
+    @api.depends()
+    def action_button_search(self):
+        for record in self:
+            search_subject_chapters = self.env["subject.details"].search(
+                [("subject_chapters", ">=", 8)]
+            )
+            self.subject_chapters_search = search_subject_chapters
+            print(
+                "Subject chapters having greater than 8 chapters: ",
+                search_subject_chapters,
+            )  # for reference-->print on terminal by clicking button
+
+    # search_read()-orm method for searching data and returns values
+    subject_search_read = fields.Char(
+        string="Field values", compute="action_search_read_method"
+    )
+
+    @api.depends()
+    def action_search_read_method(self):
+        for record in self:
+            record_values = self.env["subject.details"].search_read(
+                [], ["subject_name", "subject_chapters"]
+            )
+            self.subject_search_read = record_values
+
     subject_name = fields.Char(string="Subject Name")
 
     subject_chapters = fields.Float(string="Subject chapters included for exam")

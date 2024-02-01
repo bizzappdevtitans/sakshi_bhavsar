@@ -22,6 +22,29 @@ class Studentdetails(models.Model):
         )
         return super(Studentdetails, self).create(vals)
 
+    # unlink()-orm method for deleting record from student
+    gender_unlink = fields.Char(
+        string="Number of male gender fields", compute="action_button_unlink"
+    )
+
+    @api.depends()
+    def action_button_unlink(self):
+        for record in self:
+            unlink_gender_record = self.env["student.details"].search(
+                [("student_gender", "=", "male")]
+            )
+            self.gender_unlink = unlink_gender_record
+            unlink_gender_record.unlink()
+        # column_id = self.env["student.details"].browse(19)-->delete single 19th record
+        # column_id.unlink()
+
+    # write()-orm method for updating data
+    @api.model
+    def write(self, vals):
+        for record in self:
+            vals = self.env["student.details"].search([("student_name", "=", "SSDE")])
+            vals.write({"student_name": "Sakshi"})
+
     student_id = fields.Many2one(
         comodel_name="exam.details",
         string="Student's exam details",

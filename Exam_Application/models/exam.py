@@ -23,6 +23,33 @@ class Examdetails(models.Model):
         )
         return super(Examdetails, self).create(vals)
 
+    # name_get and name_search function
+    @api.model
+    def name_search(self, name, args=None, operator="ilike", limit=50):
+        args = args or []
+        record = self.browse()
+        if not record:
+            record = self.search(
+                [("select_names_options", operator, name)] + args, limit=limit
+            )
+        return record.name_get()
+
+    # search_count()-orm method for searching records return count of result id's
+    exam_search_count = fields.Integer(
+        string="Exam details by search_count orm", compute="action_button_search_count")
+
+    @api.depends()
+    def action_button_search_count(self):
+        for record in self:
+            search_count_total_students = self.env["exam.details"].search_count(
+                [("students_number", ">=", 7)]
+            )
+            self.exam_search_count = search_count_total_students
+            print(
+                "Exam detail where number of students giving exam are greater than 7: ",
+                search_count_total_students,
+            )  # for reference-->print on terminal by clicking button
+
     exam_name = fields.Char(string="Enter exam name")
 
     exam_start_date = fields.Date(string="Exam Starting Date")
