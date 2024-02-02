@@ -9,11 +9,9 @@ class Subjectdetails(models.Model):
     _rec_name = "subject_name"
 
     subject_id = fields.Many2one(
-        comodel_name="exam.details", string="Subject Exam details"
-    )
+        comodel_name="exam.details", string="Subject Exam details")
     subject_faculty_id = fields.Many2one(
-        comodel_name="faculty.details", string="Subject Faculty details"
-    )
+        comodel_name="faculty.details", string="Subject Faculty details")
 
     subject_sequence_number = fields.Char(
         string="Subject sequence",
@@ -23,42 +21,45 @@ class Subjectdetails(models.Model):
         default="New Sequence",
     )
 
-    # sequence number generate using create() (orm method) and api.model(decorator)
+    # ------------------
+    # sequence number generate
+    # ------------------
     @api.model
     def create(self, vals):
         vals["subject_sequence_number"] = self.env["ir.sequence"].next_by_code(
-            "subject.details"
-        )
+            "subject.details")
         return super(Subjectdetails, self).create(vals)
 
-    # search()-orm method for searching records returns result id's
+    # -------------
+    # search()-orm method
+    # -------------
     subject_chapters_search = fields.Char(
-        string="Subject chapter by search orm", compute="action_button_search"
+        string="subject having chapters(more than 8)",
+        compute="action_chapter_count_search",
+        readonly=True,
     )
 
     @api.depends()
-    def action_button_search(self):
+    def action_chapter_count_search(self):
         for record in self:
             search_subject_chapters = self.env["subject.details"].search(
-                [("subject_chapters", ">=", 8)]
-            )
+                [("subject_chapters", ">=", 8)])
             self.subject_chapters_search = search_subject_chapters
-            print(
-                "Subject chapters having greater than 8 chapters: ",
-                search_subject_chapters,
-            )  # for reference-->print on terminal by clicking button
 
-    # search_read()-orm method for searching data and returns values
+    # ---------------
+    # search_read()-orm method
+    # ---------------
     subject_search_read = fields.Char(
-        string="Field values", compute="action_search_read_method"
+        string="Subject Data(ID,SubjectName,SubjectChapters)",
+        compute="action_search_read_method",
+        readonly=True,
     )
 
     @api.depends()
     def action_search_read_method(self):
         for record in self:
             record_values = self.env["subject.details"].search_read(
-                [], ["subject_name", "subject_chapters"]
-            )
+                [], ["subject_name", "subject_chapters"])
             self.subject_search_read = record_values
 
     subject_name = fields.Char(string="Subject Name")
@@ -68,20 +69,20 @@ class Subjectdetails(models.Model):
     subject_description = fields.Text(string="Subject exam description")
 
     subject_textbooks_no = fields.Integer(
-        string="No of textbooks to be read for the exam"
-    )
+        string="No of textbooks to be read for the exam")
 
-    subject_exam_start_date = fields.Date(string="Subject Exam Date")
+    subject_exam_start_date = fields.Date(string="Exam starting Date")
 
-    subject_exam_end_date_time = fields.Datetime(string="Subject Exam Date & Time")
+    subject_exam_end_date_time = fields.Datetime(string="Exam ending Date & Time")
 
     exam_subject_confirmation = fields.Boolean(
-        string="Confirm to take exam of this subject(True/False)"
-    )
+        string="Confirm to take exam of this subject(True/False)")
 
     subject_textbooks = fields.Binary(string="Attach subject textbooks")
 
-    # [constraints]- Decorator
+    # ----------------------
+    # constraints()- Decorator
+    # ----------------------
     @api.constrains("subject_textbooks_no")
     def constraints_subject_textbook_no(self):
         for record in self:

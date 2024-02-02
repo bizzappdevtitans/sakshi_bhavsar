@@ -14,48 +14,81 @@ class Studentdetails(models.Model):
         default=0,
     )
 
-    # sequence number generate using create() (orm method) and api.model(decorator)
+    # --------------
+    # sequence number generate
+    # --------------
     @api.model
     def create(self, vals):
         vals["student_sequence_number"] = self.env["ir.sequence"].next_by_code(
-            "student.details"
-        )
+            "student.details")
         return super(Studentdetails, self).create(vals)
 
-    # unlink()-orm method for deleting record from student
+    # --------------
+    # unlink()-orm method
+    # --------------
     gender_unlink = fields.Char(
-        string="Number of male gender fields", compute="action_button_unlink"
+        string="Male gender Data(Deleted)",
+        compute="action_gender_male_unlink",
+        readonly=True,
     )
 
     @api.depends()
-    def action_button_unlink(self):
+    def action_gender_male_unlink(self):
         for record in self:
-            unlink_gender_record = self.env["student.details"].search(
-                [("student_gender", "=", "male")]
-            )
-            self.gender_unlink = unlink_gender_record
-            unlink_gender_record.unlink()
+            unlink_gender_male_record = self.env["student.details"].search(
+                [("student_gender", "=", "male")])
+            self.gender_unlink = unlink_gender_male_record
+            unlink_gender_male_record.unlink()
         # column_id = self.env["student.details"].browse(19)-->delete single 19th record
         # column_id.unlink()
 
-    # write()-orm method for updating data
-    @api.model
+    # -----------------
+    # write()-orm method
+    # -----------------
+    """@api.model
     def write(self, vals):
         for record in self:
             vals = self.env["student.details"].search([("student_name", "=", "SSDE")])
-            vals.write({"student_name": "Sakshi"})
+            vals.write({"student_name": "Sakshi"})"""
+
+    # -----------------
+    # search_count()-orm method
+    # -----------------
+    student_fees_count = fields.Integer(
+        string="Students Count whose fees(more than 15000)",
+        compute="action_student_fees_count",
+        readonly=True,
+    )
+
+    @api.depends()
+    def action_student_fees_count(self):
+        for record in self:
+            search_count_total_students = self.env["student.details"].search_count(
+                [("student_fees", ">=", 15000)])
+            self.student_fees_count = search_count_total_students
 
     student_id = fields.Many2one(
-        comodel_name="exam.details",
-        string="Student's exam details",
-    )
+        comodel_name="exam.details", string="Student's exam details")
+
+    # ------------------
+    # name_get and name_search function
+    # ------------------
+    @api.depends("student_id")
+    def name_search(self, name="", args=None, operator="ilike", limit=100):
+        args = []
+        if name:
+            record = self.search([("exam_fees", operator, name)] + args, limit=limit)
+            return record.name_get()
+        return super(Studentdetails, self).name_search(
+            name=name, args=args, operator=operator, limit=limit
+        )
+
     student_examsubject_id = fields.Many2one(
-        comodel_name="subject.details", string="Student's Exam subject details"
-    )
+        comodel_name="subject.details", string="Student's Exam subject details")
 
     student_name = fields.Char(string="Student Name")
 
-    student_fees = fields.Float(string="Total Fees (including exam fees-500)")
+    student_fees = fields.Float(string="Total Fees(exam fees +500)")
 
     student_address = fields.Text(string="Student Address")
 
@@ -79,29 +112,30 @@ class Studentdetails(models.Model):
     )
 
     student_confirmation = fields.Boolean(
-        string="Confirmation for giving exam(True/False)"
-    )
+        string="Confirmation for giving exam(True/False)", required=True, default=True)
 
     student_exam_hallticket_attach = fields.Binary(
-        string="Attach Student Exam Hallticket"
-    )
+        string="Attach Student Exam Hallticket")
 
+    # ----------------
     # function of fees calculation on button click
+    # ----------------
     def action_fees_calculation(self):
         for rec in self:
             student_fees = rec.student_fees - 500
             rec.student_exam_fees = student_fees
 
-    student_exam_fees = fields.Float(string="Student fees(excluding 500 exam fees)")
+    student_exam_fees = fields.Float(string="Student fees(-500 exam fees)")
 
-    # for smart button-[exam count]
+    # -------------
+    # smart button-[exam count]
+    # -------------
     exam_count = fields.Integer(string="Total Exams", compute="count_exam_data")
 
     def count_exam_data(self):
         for rec in self:
             exam_count = self.env["exam.details"].search_count(
-                [("assign_students_exam", "=", rec.id)]
-            )
+                [("assign_students_exam", "=", rec.id)])
             rec.exam_count = exam_count
 
     def action_count_exam(self):
@@ -126,14 +160,12 @@ class Studentdetails(models.Model):
                 "target": "new",
             }
 
-    student_exam_start_date = fields.Date(
-        string="Student exam Date",
-        compute="onchange_date_method",
-        store=True,
-        readonly=False,
-    )
-
+    # -------------------
     # [onchange]- Decorator
+    # -------------------
+    student_exam_start_date = fields.Date(
+        string="Student exam Date", compute="onchange_date_method", store=True)
+
     @api.onchange("student_fees")
     def onchange_date_method(self):
         todays_date = fields.Date.today()

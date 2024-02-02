@@ -15,40 +15,31 @@ class Examdetails(models.Model):
         default="New Sequence",
     )
 
-    # sequence number generate using create() (orm method) and api.model(decorator)
+    # --------
+    # sequence number generate
+    # --------
     @api.model
     def create(self, vals):
         vals["exam_sequence_number"] = self.env["ir.sequence"].next_by_code(
-            "exam.details"
-        )
+            "exam.details")
         return super(Examdetails, self).create(vals)
 
-    # name_get and name_search function
-    @api.model
-    def name_search(self, name, args=None, operator="ilike", limit=50):
-        args = args or []
-        record = self.browse()
-        if not record:
-            record = self.search(
-                [("select_names_options", operator, name)] + args, limit=limit
-            )
-        return record.name_get()
-
-    # search_count()-orm method for searching records return count of result id's
+    # -------------
+    # search_count()-orm method
+    # -------------
     exam_search_count = fields.Integer(
-        string="Exam details by search_count orm", compute="action_button_search_count")
+        string="No. of students giving the exam(more than 7) :",
+        compute="action_exam_search_count",
+        readonly=True,
+    )
 
     @api.depends()
-    def action_button_search_count(self):
+    def action_exam_search_count(self):
         for record in self:
             search_count_total_students = self.env["exam.details"].search_count(
                 [("students_number", ">=", 7)]
             )
             self.exam_search_count = search_count_total_students
-            print(
-                "Exam detail where number of students giving exam are greater than 7: ",
-                search_count_total_students,
-            )  # for reference-->print on terminal by clicking button
 
     exam_name = fields.Char(string="Enter exam name")
 
@@ -56,15 +47,15 @@ class Examdetails(models.Model):
 
     exam_end_date_time = fields.Datetime(string="Exam ending Date & Time")
 
-    exam_confirmation = fields.Boolean(string="Confirm to held the exam(True/False)")
+    exam_confirmation = fields.Boolean(string="Confirm to hold the exam(True/False)")
 
-    exam_fees = fields.Float(string="Exam helding fee")
+    exam_fees = fields.Float(string="Exam holding fee")
 
     students_number = fields.Integer(string="Enter total students giving this exam")
-    color_widget = fields.Integer(string="Color Picker")
+    # color_widget = fields.Integer(string="Color Picker")
 
     seating_option = fields.Selection(
-        string="Select sections for seating",
+        string="Select sections for Students exam",
         selection=[
             ("a", "A"),
             ("b", "B"),
@@ -78,29 +69,21 @@ class Examdetails(models.Model):
 
     attach_documents = fields.Binary(string="Exam Hall picture")
 
-    exam_description = fields.Text(string="Held Exam Description")
+    exam_description = fields.Text(string="Holdind Exam Description")
     term_conditions = fields.Text(string="Term and conditions related examination")
 
     exam_college_address = fields.Html(string="Examination hall address")
 
-    select_names_options = fields.Many2one(
-        comodel_name="res.partner", string="Many to one Relational field"
-    )
-
-    select_categories_options = fields.Many2many(
-        comodel_name="res.partner.category", string="Many to Many Relational field"
-    )
-
     assign_students_exam = fields.One2many(
         comodel_name="student.details",
         inverse_name="student_id",
-        string="Assign student for exam",
+        string="Assign students for exam",
     )
 
     assign_supervisors_exam = fields.One2many(
         comodel_name="supervisor.details",
         inverse_name="supervisor_id",
-        string="Assign supervisor for exam",
+        string="Assign supervisors for exam",
     )
 
     states = fields.Selection(
@@ -109,17 +92,19 @@ class Examdetails(models.Model):
             ("in_progress", "In Progress"),
             ("done", "Done"),
         ],
-        string="State after giving exam",
+        string="State of exam papers after exam",
         required=True,
         default="in_progress",
     )
 
+    # ---------
     # SQL constrains
+    # ---------
     _sql_constraints = [
         (
             "unique_exam_description",
             "unique (exam_description)",
-            "Exam description must be unique cannot enter same ",
+            "Exam description must be unique cannot enter same as already entered",
         ),
         (
             "check_students_number",
@@ -128,16 +113,20 @@ class Examdetails(models.Model):
         ),
     ]
 
-    # [Decorator]-python constains
+    # -------------------
+    # python constains
+    # -------------------
     @api.constrains("term_conditions", "exam_description")
     def constraints_college_name_description(self):
         for record in self:
             if record.term_conditions == record.exam_description:
                 raise ValidationError(
-                    "term conditions box and Exam description fields content must be different"
+             "term conditions box and Exam description fields content must be different"
                 )
 
+    # -------------------
     # buttons state change- [widget statusbar]
+    # -------------------
     def action_draft(self):
         self.write({"states": "draft"})
 
@@ -147,7 +136,9 @@ class Examdetails(models.Model):
     def action_done(self):
         self.write({"states": "done"})
 
-    # for smart button-[student count]
+    # -------------------
+    # smart button-[student count]
+    # -------------------
     student_count = fields.Integer(
         string="Total Students", compute="count_student_data"
     )
@@ -155,8 +146,7 @@ class Examdetails(models.Model):
     def count_student_data(self):
         for rec in self:
             student_count = self.env["student.details"].search_count(
-                [("student_id", "=", rec.id)]
-            )
+                [("student_id", "=", rec.id)])
             rec.student_count = student_count
 
     def action_count_student(self):
@@ -181,7 +171,9 @@ class Examdetails(models.Model):
                 "target": "new",
             }
 
-    # for smart button-[supervisor count]
+    # -----------------
+    # smart button-[supervisor count]
+    # -----------------
     supervisor_count = fields.Integer(
         string="Total Supervisors", compute="count_supervisor_data"
     )

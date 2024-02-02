@@ -19,6 +19,7 @@
                 <field name="student_exam_end_date_time" widget="remaining_days"></field>
                 <field name="student_exam_hallticket_attach"></field>
                 <field name="gender_unlink"></field>
+                <field name="student_fees_count"></field>
             </tree>
         </field>
     </record>
@@ -28,10 +29,6 @@
         <field name="model">student.details</field>
         <field name="arch" type="xml">
             <form>
-                <!--button for unlink()-orm method -->
-                <div class="oe_title">
-                    <button string="Button unlink(Delete) Data" class="btn-primary" name="action_button_unlink" type="object" help="on clicking this button, this will delete the data"/>
-                </div>
                 <header>
                     <button string="Total Fees" class="btn-primary" name="action_fees_calculation" type="object"  help="this is a button having functionality of calculating total fees excluding 500 for exam fees"/>
                 </header>
@@ -68,6 +65,7 @@
                             <field name="student_exam_end_date_time"></field>
                             <field name="student_gender"></field>
                             <field name="student_exam_hallticket_attach"></field>
+                            <field name="student_fees_count"></field>
                         </group>
                     </group>
                 </sheet>
@@ -81,7 +79,6 @@
         <field name="arch" type="xml">
             <search>
                 <field name="student_id"></field>
-                <field name="student_examsubject_id"></field>
                 <field name="student_enrollment_no"></field>
                 <field name="student_name"></field>
                 <field name="student_address"></field>
