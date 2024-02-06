@@ -1,5 +1,5 @@
 {
-    "name": "Exam_Application",
+    "name": "Exam Application",
     "version": "15.0.1.0.0",
     "summary": "this is an examination application",
     "description": "this is examination application where it has details of students,faculties,supervisors,subjects.",
@@ -17,6 +17,7 @@
         "views/supervisor_views.xml",
         "views/subject_views.xml",
         "views/exam_menus_views.xml",
+        "views/res_config_settings_views.xml",
         "security/ir.model.access.csv",
     ],
     "depends": ["base"],

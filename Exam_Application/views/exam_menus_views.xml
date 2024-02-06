@@ -2,7 +2,7 @@
 <odoo>
     <menuitem
         id="exam_menu"
-        name="Examination Details" />
+        name="Examination Details"/>
 
     <menuitem
         id="exam_details"
@@ -14,13 +14,13 @@
         id="student_details"
         name="Students"
         parent="exam_menu"
-        action="action_student_details" />
+        action="action_student_details"/>
 
     <menuitem
         id="faculty_details"
         name="Faculties"
         parent="exam_menu"
-        action="action_faculty_details" />
+        action="action_faculty_details"/>
 
     <menuitem
         id="supervisor_details"
@@ -32,5 +32,5 @@
         id="subject_details"
         name="Subjects"
         parent="exam_menu"
-        action="action_examsubject_details" />
+        action="action_examsubject_details"/>
 </odoo>
