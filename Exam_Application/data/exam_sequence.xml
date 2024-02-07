@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="exam_details_sequence" model="ir.sequence">
+            <field name="name">Exam Details Sequence</field>
+            <field name="code">exam.details</field>
+            <field name="prefix">Sequence No</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

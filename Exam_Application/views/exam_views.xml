@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="exam_details_tree" model='ir.ui.view'>
+        <field name="name">exam.details.tree</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="exam_name"></field>
+                <field name="states" widget="badge"></field>
+                <field name="student_count" sum="Total"></field>
+                <field name="exam_start_date"></field>
+                <field name="exam_end_date_time" widget="remaining_days"></field>
+                <field name="exam_fees" widget="percentpie"></field>
+                <field name="term_conditions" widget="html"></field>
+                <field name="seating_option" widget="radio"></field>
+                <field name="students_number" optional="show"></field>
+                <!--<field name="color_widget"  widget="color_picker" optional="show"></field>-->
+                <field name="exam_confirmation" widget="boolean_toggle" optional="show"></field>
+                <field name="exam_description" optional="show"></field>
+                <field name="exam_college_address" optional="show"></field>
+                <field name="attach_documents" optional="show"></field>
+                <field name="assign_students_exam"></field>
+                <field name="assign_supervisors_exam"></field>
+                <field name="exam_search_count"></field>
+            </tree>
+        </field>
+    </record>
+    <record id="exam_details_form" model='ir.ui.view'>
+        <field name="name">exam.details.form</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="states" widget="statusbar" statusbar_visible="in progress,done"/>
+                    <button string="Button In Progress" class="btn-success" name="action_in_progress" type="object"/>
+                    <button string="Button Done" class="btn-danger" name="action_done" type="object"/>
+                    <!--onclick button for changing state with statusbas widget-->
+                    <!--<field name="state_field" widget="statusbar" options="{'clickable': True}" statusbar_visible="draft,in_progress,done"/>-->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h3>
+                            <field name="exam_sequence_number" readonly='1'/>
+                        </h3>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_count_student" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having student details according to exam id">
+                            <div class="o_stat_info">
+                                <field name="student_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Student records</span>
+                            </div>
+                        </button>
+                        <button name="action_count_supervisor" type="object" class="oe_start_button" icon="fa-solid fa-users" help="This is smart button having supervisor details according to exam id">
+                            <div class="o_stat_info">
+                                <field name="supervisor_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Supervisor records</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="exam_name"></field>
+                            <field name="exam_start_date"></field>
+                            <field name="exam_end_date_time"></field>
+                            <field name="exam_fees"></field>
+                            <field name="term_conditions"></field>
+                            <field name="exam_college_address" optional="show"></field>
+                            <field name="attach_documents"></field>
+                        </group>
+                        <group>
+                            <field name="seating_option"></field>
+                            <field name="students_number"></field>
+                            <!--<field name="color_widget" widget="color_picker"></field>-->
+                            <field name="exam_confirmation"></field>
+                            <field name="exam_description"></field>
+                            <field name="exam_search_count"></field>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Supervisor Details">
+                            <tree>
+                                <field name="assign_supervisors_exam"></field>
+                            </tree>
+                        </page>
+                    </notebook>
+                    <notebook>
+                        <page string="Student Details(One2many field)">
+                            <field name="assign_students_exam">
+                                <tree editable="bottom">
+                                    <field name="student_id"></field>
+                                    <field name="student_examsubject_id"></field>
+                                    <field name="student_name"></field>
+                                    <field name="student_fees"></field>
+                                    <field name="student_address"></field>
+                                    <field name="student_enrollment_no"></field>
+                                    <field name="student_exam_end_date_time"></field>
+                                    <field name="student_gender"></field>
+                                    <field name="student_confirmation"></field>
+                                    <field name="student_exam_hallticket_attach"></field>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="exam_details_search" model='ir.ui.view'>
+        <field name="name">exam.details.search</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="exam_name"></field>
+                <field name="exam_start_date"></field>
+                <field name="exam_end_date_time"></field>
+                <field name="exam_confirmation"></field>
+                <field name="exam_fees"></field>
+                <field name="term_conditions"></field>
+                <field name="exam_college_address" optional="show"></field>
+                <field name="seating_option"></field>
+                <field name="students_number"></field>
+                <field name="attach_documents"></field>
+                <field name="exam_description"></field>
+                <field name="assign_students_exam"></field>
+
+                <filter name="filter_selection_option" string="A selector" domain="[('seating_option','=','a')]"/>
+                <separator/>
+                <filter name="filter_selection_option" string="B selector" domain="[('seating_option','=','b')]"/>
+                <separator/>
+                <filter name="filter_exam_fees" string="[Exam Fee] filter less than 200" domain="[('exam_fees','&lt;=',200)]"/>
+                <separator/>
+                <filter name="filter_status_field" string="Status Filter having Done" domain="[('states','=','done')]"/>
+
+                <group expand='0' string="Group By">
+                    <filter name="groupby_selection_option" string="Selection Option(A/B)" context="{'group_by':'seating_option'}"/>
+                    <filter name="groupby_students_number" string="GroupBy Roll Number" context="{'group_by':'students_number'}"/>
+                    <filter name="groupby_boolean_field" string="GroupBy True/False" context="{'group_by':'exam_confirmation'}"/>
+                    <filter name="groupby_exam_start_date" string="GroupBy Only Date" context="{'group_by':'exam_start_date'}"/>
+                    <filter name="groupby_status_field" string="GroupBy StatusBar" context="{'group_by':'states'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="exam_details_kanban" model='ir.ui.view'>
+        <field name="name">exam.details.kanban</field>
+        <field name="model">exam.details</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="students_number"></field>
+                <field name="exam_description"></field>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <span t-esc="record.students_number.raw_value"></span>
+                            <span t-esc="record.exam_description.raw_value"></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_exam_details" model="ir.actions.act_window">
+        <field name="name">Exam Details</field>
+        <field name="res_model">exam.details</field>
+        <field name="view_mode">tree,kanban,search,form</field>
+    </record>
+
+</odoo>

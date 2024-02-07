@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="subject_details_sequence" model="ir.sequence">
+            <field name="name">Subject sequence number</field>
+            <field name="code">subject.details</field>
+            <field name="prefix">Sequence No </field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+        </record>
+    </data>
+</odoo>
