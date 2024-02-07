@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="student_details_list" model='ir.ui.view'>
+        <field name="name">student.details.list</field>
+        <field name="model">student.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="student_id"></field>
+                <field name="student_examsubject_id"></field>
+                <field name="student_enrollment_no"></field>
+                <field name="student_name" widget="badge"></field>
+                <field name="student_unique_code"></field>
+                <field name="student_address"></field>
+                <field name="student_confirmation" widget="boolean_toggle"></field>
+                <field name="student_fees" sum="Total" widget="monetary"></field>
+                <field name="student_exam_fees" sum="Total" widget="monetary"></field>
+                <field name="student_gender" widget="badge"></field>
+                <field name="student_exam_end_date_time" widget="remaining_days"></field>
+                <field name="student_exam_hallticket_attach"></field>
+                <field name="gender_unlink"></field>
+                <field name="student_fees_count"></field>
+            </tree>
+        </field>
+    </record>
+    <record id="student_details_form" model='ir.ui.view'>
+        <field name="name">student.details.form</field>
+        <field name="model">student.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Total Fees" class="btn-primary" name="action_fees_calculation" type="object"  help="this is a button having functionality of calculating total fees excluding 500 for exam fees"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h3>
+                            <field name="student_sequence_number" readonly="1"/>
+                        </h3>
+                    </div>
+                     <div class="oe_button_box" name="button_box">
+                        <button name="action_count_exam" type="object" class="oe_start_button" icon="fa-solid fa-user" help="This is smart button having exam details according to student id details">
+                            <div class="o_stat_info">
+                                <field name="exam_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Exam records</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="student_id"></field>
+                            <field name="student_examsubject_id"></field>
+                            <field name="student_enrollment_no"></field>
+                            <field name="student_name"></field>
+                            <field name="student_unique_code"></field>
+                            <field name="student_address"></field>
+                            <field name="student_confirmation"></field>
+                            <field name="gender_unlink"></field>
+                        </group>
+                        <group>
+                            <field name="student_fees"></field>
+                            <field name="student_exam_fees"></field>
+                            <field name="student_exam_start_date"></field>
+                            <field name="student_exam_end_date_time"></field>
+                            <field name="student_gender"></field>
+                            <field name="student_exam_hallticket_attach"></field>
+                            <field name="student_fees_count"></field>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="student_details_search" model='ir.ui.view'>
+        <field name="name">student.details.search</field>
+        <field name="model">student.details</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="student_id"></field>
+                <field name="student_examsubject_id"></field>
+                <field name="student_enrollment_no"></field>
+                <field name="student_name"></field>
+                <field name="student_unique_code"></field>
+                <field name="student_address"></field>
+                <field name="student_confirmation"></field>
+                <field name="student_fees"></field>
+                <field name="student_gender"></field>
+                <field name="student_exam_start_date"></field>
+                <field name="student_exam_end_date_time"></field>
+                <field name="student_exam_hallticket_attach"></field>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_student_details" model="ir.actions.act_window">
+        <field name="name">Student Details</field>
+        <field name="res_model">student.details</field>
+        <field name="view_mode">tree,search,form</field>
+    </record>
+
+</odoo>

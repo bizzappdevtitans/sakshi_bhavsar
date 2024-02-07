@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <menuitem
+        id="exam_menu"
+        name="Examination Details"/>
+
+    <menuitem
+        id="exam_details"
+        name="Exam Details"
+        parent="exam_menu"
+        action="action_exam_details"/>
+
+    <menuitem
+        id="student_details"
+        name="Students"
+        parent="exam_menu"
+        action="action_student_details"/>
+
+    <menuitem
+        id="faculty_details"
+        name="Faculties"
+        parent="exam_menu"
+        action="action_faculty_details"/>
+
+    <menuitem
+        id="supervisor_details"
+        name="Supervisors"
+        parent="exam_menu"
+        action="action_supervisor_details"/>
+
+    <menuitem
+        id="subject_details"
+        name="Subjects"
+        parent="exam_menu"
+        action="action_examsubject_details"/>
+</odoo>
